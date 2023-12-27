@@ -10,10 +10,19 @@ config_version=5
 
 [application]
 
-config/name="Egg Run"
+config/name="The cake is not a lie"
 run/main_scene="res://world.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/ios/allow_high_refresh_rate=false
+window/ios/hide_home_indicator=false
+window/ios/hide_status_bar=false
+window/ios/suppress_ui_gesture=false
 
 [input]
 

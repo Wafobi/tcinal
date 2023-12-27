@@ -4,9 +4,10 @@ signal dead
 signal setupDone
 
 var coyote_timer : Timer
-var coyote_time = 0.1
+var coyote_time = 0.2
 var can_coyote_jump = false
 var jump_buffer = 0
+var jumping = false
 
 var has_double_jump = true
 var has_wall_jump = true
@@ -52,10 +53,6 @@ func setCollisions():
 	set_collision_mask_value(1,true) # mobs
 	set_collision_mask_value(3,true) # enemies
 
-func setupCamera():
-	$Camera2D.drag_horizontal_enabled = true
-	$Camera2D.drag_vertical_enabled = true
-
 func is_near_wall():
 	return wallDetector.is_colliding()
 
@@ -72,24 +69,34 @@ func _on_coyote_timer_timeout():
 
 func _process(_delta):
 	if active:
-		$AnimatedSprite2D.play("idle")
 		if direction:
 			view_direction = direction
+
 		if looks_right():
 			wallDetector.target_position.x = 6
 			$AnimatedSprite2D.flip_h = false
-		if looks_left():
+		elif looks_left():
 			wallDetector.target_position.x = -6
 			$AnimatedSprite2D.flip_h = true
 
+		if jumping:
+			$AnimatedSprite2D.play("jump")
+		else:
+			if velocity.x != 0:
+				$AnimatedSprite2D.play("walk")
+			else:
+				$AnimatedSprite2D.play("idle")
+		if state == states.FLOOR:
+			jumping = false
+
+var jump_started=false
 func _physics_process(delta):
 	if active:
 		move(delta)
-		doGravity(delta)
-		if velocity:
-			move_and_slide()
+	doGravity(delta)
+	if velocity:
+		move_and_slide()
 
-var jump_started=false
 func move(delta):
 	direction = Input.get_vector("walk_left", "walk_right", "walk_up", "walk_down").normalized()
 	var speed = default_speed
@@ -149,12 +156,12 @@ func move(delta):
 			if direction.x:
 				velocity.x = direction.x * speed
 			if Input.is_action_just_pressed("jump") or jump_buffer > 0:
-				$AnimatedSprite2D.play("jump")
-				jump()
 				jump_started = true
+				jump()
 				jump_buffer = 0
 				jump_count = 1
 				state = states.AIR
+				jumping = true
 			if Input.is_action_just_pressed("dash") and has_dash:
 				# see https://www.youtube.com/watch?v=Q2oRzUXB27w&t=58s
 				pass
