@@ -71,7 +71,7 @@ func checkFallDamage():
 	if fall_velocity > 0 and velocity.y == 0:
 		if fall_velocity >= fatal_y_velocity:
 			print("player died from falling to hard")
-			dead.emit()
+			#dead.emit()
 		fall_velocity = 0
 
 func _process(_delta):
