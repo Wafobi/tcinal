@@ -1,13 +1,10 @@
 class_name ResourceHandler extends Node2D
 
-# for menu see https://www.youtube.com/watch?v=Ueivz6JY5Fw
-
 var game_settings = {
 	save_game = false
 }
 
 var resources = {
-	# characters
 	"player" : "player",
 	"fields" : "levels/fields",
 }
@@ -20,6 +17,7 @@ var playerSaveFile=saveFolder+"player.tscn"
 
 var saveFiles = {
 	"fields" : saveFolder+"fields",
+	"player" : saveFolder+"player",
 }
 
 func instantiate_resource(resource_name):

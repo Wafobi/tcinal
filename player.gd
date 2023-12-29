@@ -45,8 +45,10 @@ func _ready():
 
 func setCollisions():
 	set_collision_layer_value(2,true)
-	set_collision_mask_value(1,true) # mobs
-	set_collision_mask_value(3,true) # enemies
+	set_collision_mask_value(1,true) # ground
+	set_collision_mask_value(3,true) # traps
+	set_collision_mask_value(9,true) # LevelBoundaries
+	set_collision_mask_value(10,true) # CheckPoints
 
 func is_near_wall():
 	return wallDetector.is_colliding()

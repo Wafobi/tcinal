@@ -1,5 +1,7 @@
 class_name Main extends ResourceHandler
 
+# for menu see https://www.youtube.com/watch?v=Ueivz6JY5Fw
+
 var startLevel = "fields"
 
 var level = null

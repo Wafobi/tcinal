@@ -13,7 +13,7 @@ func _ready():
 	for door : Area2D in getDoors():
 		door.collision_layer = 0
 		door.set_collision_layer_value(5,true)
-		door.set_collision_mask_value(1,true)
+		door.set_collision_mask_value(2,true)
 		door.z_index = 0
 	loaded.emit()
 
