@@ -51,7 +51,9 @@ Man geht nach Hause, backt den Kuchen und gibt ihn ab.
 0) "Das war höchstens hellrot, Chef." (Blues brothers)
 Beim überqueren der roten Ampel
 
-Erde:
+"Zum Glück hängen an diesem Baum keine Leichen" (Witcher)
+
+Wald:
 1)
 "Oh eine Mülltonne, habe gehört es gäbe sogar einen Planeten voller Müll. Wahnsinn"
 "Look a dumpster, I heard about a planet like this"
@@ -63,19 +65,19 @@ Erde:
 (Herr der Ringe)
 
 3)
-
-
-Mischgebiet:
-4)
 "Quak. Bist du der Bruchpilot?" (Duck Tales)
 "Quak, got any grapes?" (the duck song)
 
+Berge:
+4)
+
+
 5)
-"Zum Glück hängen an diesem Baum keine Leichen" (Witcher)
+
 
 6)
 
-Höhle:
+Dungeon:
 7)
 "Oh eine Fledermaus - ein Kämpfer für das gute"
 "Oh a bat - the dark knight"
