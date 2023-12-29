@@ -2,6 +2,7 @@ class_name Player extends CharacterBody2D
 
 signal dead
 signal setupDone
+signal checkPoint
 
 var coyote_timer : Timer
 var coyote_time = 0.2
@@ -9,12 +10,12 @@ var can_coyote_jump = false
 var jump_buffer = 0
 var jumping = false
 
-var has_double_jump = true
+var has_double_jump = false
 var has_wall_jump = true
 var has_wall_slide = true
-var has_dash = true
+var has_dash = false
 
-var fatal_y_velocity = 400 #TODO let player take fall damange
+var fatal_y_velocity = 410 #TODO let player take fall damange
 
 enum states {FLOOR = 1, AIR, WALL}
 var state = states.AIR
@@ -41,12 +42,6 @@ func _ready():
 	wallDetector = $wallDetector
 	coyote_timer.one_shot = true
 	setCollisions()
-	call_deferred("setup")
-
-func setup():
-	await get_tree().physics_frame
-	hide()
-	setupDone.emit()
 
 func setCollisions():
 	set_collision_layer_value(2,true)
@@ -66,6 +61,16 @@ func coyote():
 
 func _on_coyote_timer_timeout():
 	can_coyote_jump = false
+
+var fall_velocity = 0
+func checkFallDamage():
+	if velocity.y > fall_velocity:
+		fall_velocity = velocity.y
+	if fall_velocity > 0 and velocity.y == 0:
+		if fall_velocity >= fatal_y_velocity:
+			print("player died from falling to hard")
+			dead.emit()
+		fall_velocity = 0
 
 func _process(_delta):
 	if active:
@@ -88,6 +93,7 @@ func _process(_delta):
 				$AnimatedSprite2D.play("idle")
 		if state == states.FLOOR:
 			jumping = false
+		checkFallDamage()
 
 var jump_started=false
 func _physics_process(delta):
@@ -110,9 +116,9 @@ func move(delta):
 				return
 			if has_wall_jump:
 				if Input.is_action_just_pressed("jump") and view_direction != direction:
-					velocity.y = jump_velocity * 0.5
+					velocity.y = jump_velocity
 					if Input.is_action_pressed("run"):
-						velocity.y = jump_velocity
+						velocity.y = jump_velocity * 0.5
 					if looks_left():
 						velocity.x = 100
 						direction.x = 1
@@ -185,9 +191,13 @@ func looks_left() -> bool :
 
 func spawn(coords):
 	position = coords
-	print("P: Spawing " + name + " at ", position)
+	call_deferred("setup")
+
+func setup():
+	await get_tree().physics_frame
 	active = true
 	show()
+	setupDone.emit()
 
 func _input(_event):
 	pass
