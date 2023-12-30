@@ -79,8 +79,10 @@ use={
 2d_physics/layer_3="Traps"
 2d_physics/layer_4="Layer 4"
 2d_physics/layer_5="Doors"
+2d_physics/layer_6="Feathers"
 2d_physics/layer_9="LevelBoundaries"
 2d_physics/layer_10="Checkpoints"
+2d_physics/layer_11="LevelGoal"
 
 [physics]
 

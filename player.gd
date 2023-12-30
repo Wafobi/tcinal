@@ -5,15 +5,15 @@ signal setupDone
 signal checkPoint
 
 var coyote_timer : Timer
-var coyote_time = 0.2
+var coyote_time = 0.1
 var can_coyote_jump = false
 var jump_buffer = 0
 var jumping = false
 
 var has_double_jump = false
-var has_wall_jump = true
-var has_wall_slide = true
 var has_dash = false
+var has_wall_slide = false
+var has_wall_jump = false
 
 var fatal_y_velocity = 410 #TODO let player take fall damange
 
@@ -41,6 +41,7 @@ func _ready():
 	coyote_timer = $"Coyote Timer"
 	wallDetector = $wallDetector
 	coyote_timer.one_shot = true
+	coyote_timer.timeout.connect(_on_coyote_timer_timeout)
 	setCollisions()
 
 func setCollisions():
@@ -70,7 +71,7 @@ func checkFallDamage():
 		fall_velocity = velocity.y
 	if fall_velocity > 0 and velocity.y == 0:
 		if fall_velocity >= fatal_y_velocity:
-			print("player died from falling to hard")
+			print("player died from hitting the ground to hard ", fall_velocity)
 			#dead.emit()
 		fall_velocity = 0
 
@@ -127,7 +128,6 @@ func move(delta):
 					if looks_right():
 						velocity.x = -100
 						direction.x = -1
-					jump_count = 1
 					state = states.AIR
 					return
 			if has_wall_slide:
@@ -154,6 +154,7 @@ func move(delta):
 			if Input.is_action_just_pressed("dash") and has_dash:
 					pass
 		states.FLOOR:
+			jump_count = 0
 			if not is_on_floor(): #falling off a cliff (coyote)
 				state = states.AIR
 				coyote()
@@ -166,8 +167,6 @@ func move(delta):
 			if Input.is_action_just_pressed("jump") or jump_buffer > 0:
 				jump_started = true
 				jump()
-				jump_buffer = 0
-				jump_count = 1
 				state = states.AIR
 				jumping = true
 			if Input.is_action_just_pressed("dash") and has_dash:
@@ -177,6 +176,7 @@ func move(delta):
 
 func jump():
 	jump_count += 1
+	jump_buffer = 0
 	velocity.y = jump_velocity
 
 func getGravity(delta):
