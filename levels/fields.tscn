@@ -8,7 +8,7 @@
 size = Vector2(926, 232)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g4oig"]
-size = Vector2(167.5, 68)
+size = Vector2(184.5, 99)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8jto1"]
 size = Vector2(629.25, 115.5)
@@ -44,7 +44,6 @@ layer_5/tile_data = PackedInt32Array()
 position = Vector2(227, 1242)
 
 [node name="LevelBounds" type="Area2D" parent="TileMap"]
-visible = false
 position = Vector2(45, 911)
 collision_layer = 256
 collision_mask = 2
@@ -55,7 +54,7 @@ position = Vector2(330, 57)
 shape = SubResource("RectangleShape2D_fh6c6")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="TileMap/LevelBounds"]
-position = Vector2(935.75, 207)
+position = Vector2(927.25, 191.5)
 shape = SubResource("RectangleShape2D_g4oig")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="TileMap/LevelBounds"]

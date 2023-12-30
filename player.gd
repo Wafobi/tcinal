@@ -51,6 +51,7 @@ func setCollisions():
 	set_collision_mask_value(3,true) # traps
 	set_collision_mask_value(9,true) # LevelBoundaries
 	set_collision_mask_value(10,true) # CheckPoints
+	set_collision_mask_value(11,true) # LevelGoal
 
 func is_near_wall():
 	return wallDetector.is_colliding()

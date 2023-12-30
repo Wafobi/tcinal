@@ -17,16 +17,16 @@ var saveFolder="user://"+worldName+"/"
 var worldMapSaveFile=saveFolder+"map.tscn"
 var playerSaveFile=saveFolder+"player.tscn"
 
-func addSaveFile(name : String):
-	saveFiles[name] = saveFolder+name
+func addSaveFile(fileName : String):
+	saveFiles[fileName] = saveFolder+fileName
 
-func addCharacter(name : String):
-	characters[name] = name
-	addSaveFile(name)
+func addCharacter(charName : String):
+	characters[charName] = charName
+	addSaveFile(charName)
 
-func addLevel(name : String):
-	levels[name] = "levels/"+name
-	addSaveFile(name)
+func addLevel(levelName : String):
+	levels[levelName] = "levels/"+levelName
+	addSaveFile(levelName)
 	resources.merge(levels)
 
 func _ready():
