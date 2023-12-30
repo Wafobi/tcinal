@@ -24,6 +24,11 @@ func _ready():
 func loadplayer():
 	player = loadIfSaveFileExists("player")
 	player.dead.connect(onPlayerDeath)
+	player.setupDone.connect(onPlayerSetupDone)
+
+func onPlayerSetupDone():
+	print("Player ready")
+	player.active = true
 
 func onPlayerDeath():
 	szeneTransition("demo_room")
@@ -32,6 +37,7 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 	var new_level = loadIfSaveFileExists(toSzene)
 	if new_level:
 		if player:
+			player.active = false
 			saveplayer()
 		if level:
 			saveLevel()
@@ -39,9 +45,11 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 			level.cleanup(false)
 			remove_child(level)
 			level=null
+		Checkpoints.last_checkpoint = null
 		spawnPoint = target
 		level = new_level
 		level.loaded.connect(levelCreated)
+		level.levelDone.connect(levelDone)
 		add_child(level)
 	else:
 		print(toSzene, " not found")
@@ -57,3 +65,9 @@ func levelCreated():
 			print("Player going to spawn in ", level.name, " at ", sp.name, " ", var_to_str(sp.position))
 			level.setupPlayer(player, sp.position)
 			return
+
+func levelDone(levelName):
+	player.active = false
+	player.velocity = Vector2.ZERO
+	player.gravity = 50
+	print("Player finish ", levelName)

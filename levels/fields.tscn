@@ -41,7 +41,7 @@ layer_4/tile_data = PackedInt32Array(4194304, 65536, 0, 4194305, 65536, 0, 41943
 layer_5/tile_data = PackedInt32Array()
 
 [node name="SpawnPoint" type="Marker2D" parent="TileMap" groups=["SpawnPoint"]]
-position = Vector2(-7, 1022)
+position = Vector2(227, 1242)
 
 [node name="LevelBounds" type="Area2D" parent="TileMap"]
 visible = false
@@ -99,6 +99,8 @@ position = Vector2(8, 1022)
 
 [node name="demo_room" type="Area2D" parent="TileMap" groups=["door"]]
 position = Vector2(8, 1017)
+collision_layer = 16
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/demo_room"]
 position = Vector2(0, -9)

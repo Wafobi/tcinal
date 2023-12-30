@@ -5,6 +5,4 @@ func getTileMap() -> TileMap:
 
 func _on_goal_body_entered(body):
 	if body is Player:
-		body.velocity.x = 0
-		body.active = false
-		print("Player finish the Level")
+		levelDone.emit(name)

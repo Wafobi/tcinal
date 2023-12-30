@@ -33,10 +33,11 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var direction : Vector2 = Vector2.ZERO
 var view_direction : Vector2 = Vector2.ZERO
 
-var active = false
+var active
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	active = false
 	health = 10
 	coyote_timer = $"Coyote Timer"
 	wallDetector = $wallDetector
@@ -192,12 +193,14 @@ func looks_left() -> bool :
 	return view_direction.x < 0
 
 func spawn(coords):
+	gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 	position = coords
+	velocity = Vector2.ZERO
+	fall_velocity = 0
 	call_deferred("setup")
 
 func setup():
 	await get_tree().physics_frame
-	active = true
 	show()
 	setupDone.emit()
 

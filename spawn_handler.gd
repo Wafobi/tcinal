@@ -2,6 +2,7 @@ class_name SpawnHandler extends ResourceHandler
 
 signal loaded
 signal doorSignal
+signal levelDone
 
 var leaving_level = false
 var player : Player = null
@@ -77,7 +78,6 @@ func _input(_event):
 
 func respawnPlayer():
 	print("player respawning")
-	player.active = false
 	if Checkpoints.last_checkpoint:
 		player.spawn(Checkpoints.last_checkpoint)
 	else:
