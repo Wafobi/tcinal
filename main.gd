@@ -1,6 +1,7 @@
 class_name Main extends ResourceHandler
 
 # for menu see https://www.youtube.com/watch?v=Ueivz6JY5Fw
+# for paralex background : https://www.youtube.com/watch?v=f8z4x6R7OSM
 
 var level : SpawnHandler
 var spawnPoint :String
