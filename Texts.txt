@@ -1,7 +1,7 @@
 TODO:
-	fix level goals
 	castle level
-	more feathers
+	more feather typed
+	make goal a chicken
 	UI
 
 

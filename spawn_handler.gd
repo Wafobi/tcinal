@@ -44,6 +44,10 @@ func levelBoundsHit(body):
 		respawning = true
 		call_deferred("respawnPlayer")
 
+func goalReched(body):
+	if body is Player:
+		levelDone.emit(name)
+
 func prepare():
 	for feather in getRainbowFeathers():
 		feather.setType(Feather.Type.rainbow)
@@ -63,6 +67,7 @@ func prepare():
 		goal.collision_mask = 0
 		goal.set_collision_layer_value(11, true)
 		goal.set_collision_mask_value(2, true)
+		goal.body_entered.connect(goalReched)
 		print("goal setup")
 
 func getFeathers() -> Array:
@@ -119,6 +124,3 @@ func _input(_event):
 						doorSignal.emit(door.name, name+"_SpawnPoint")
 						return
 
-func _on_goal_body_entered(body):
-	if body is Player:
-		levelDone.emit(name)
