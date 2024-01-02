@@ -23,7 +23,7 @@ func _ready():
 	player = null
 	super._ready()
 	loadplayer()
-	szeneTransition("mountains")
+	szeneTransition("demo_room")
 
 func loadplayer():
 	player = loadIfSaveFileExists("player")
