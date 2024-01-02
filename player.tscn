@@ -104,7 +104,7 @@ size = Vector2(11, 16)
 [node name="player" type="CharacterBody2D"]
 z_index = 1
 collision_layer = 2
-collision_mask = 1797
+collision_mask = 1845
 slide_on_ceiling = false
 floor_stop_on_slope = false
 script = ExtResource("1_vduj5")

@@ -7,6 +7,8 @@ var level : SpawnHandler
 var spawnPoint :String
 var player : Player
 
+var levelTime : float
+
 func saveLevel():
 	saveNode(level,saveFiles[level.name])
 
@@ -15,12 +17,13 @@ func saveplayer():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	levelTime = 0.0
 	level = null
 	spawnPoint = ""
 	player = null
 	super._ready()
 	loadplayer()
-	szeneTransition("demo_room")
+	szeneTransition("fields")
 
 func loadplayer():
 	player = loadIfSaveFileExists("player")
@@ -30,6 +33,10 @@ func loadplayer():
 func onPlayerSetupDone():
 	print("Player ready")
 	player.active = true
+	levelTime = 0.0
+
+func _process(delta):
+	levelTime += delta
 
 func onPlayerDeath():
 	szeneTransition("demo_room")
@@ -56,8 +63,11 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 		print(toSzene, " not found")
 
 func levelCreated():
+	levelPoints = 0
 	level.doorSignal.connect(szeneTransition)
 	level.prepare()
+	for feather : Feather in level.getFeathers():
+		feather.collected.connect(featherCollected)
 	print("W: created ", level.name)
 	print("W: searching ", spawnPoint)
 	for sp in level.getSpawnPoints():
@@ -67,8 +77,16 @@ func levelCreated():
 			level.setupPlayer(player, sp.position)
 			return
 
+var levelPoints = 0
+var points = 0
+func featherCollected(feather : Feather):
+	levelPoints += feather.points
+	points += feather.points
+	print("Player collected feather")
+
 func levelDone(levelName):
 	player.active = false
 	player.velocity = Vector2.ZERO
 	player.gravity = 50
-	print("Player finish ", levelName)
+	print("Player finish ", levelName, " duration ", levelTime, " points from level ", levelPoints, " all points ", points)
+

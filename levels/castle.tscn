@@ -1,24 +1,22 @@
-[gd_scene load_steps=8 format=3 uid="uid://318h37vdfi3w"]
+[gd_scene load_steps=7 format=3 uid="uid://8q1orc6c4s2u"]
 
-[ext_resource type="Script" path="res://levels/fields.gd" id="1_br2kp"]
-[ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/level.tscn" id="1_uu5f3"]
-[ext_resource type="PackedScene" uid="uid://dukfbdifltsec" path="res://items/checkpoint.tscn" id="3_gj7oj"]
-[ext_resource type="PackedScene" uid="uid://bws0dg1tfv3nq" path="res://items/feather.tscn" id="4_c5c6s"]
+[ext_resource type="Script" path="res://levels/castle.gd" id="1_4g4jk"]
+[ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/level.tscn" id="2_6opg2"]
+[ext_resource type="PackedScene" uid="uid://dukfbdifltsec" path="res://items/checkpoint.tscn" id="3_j4dbw"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fh6c6"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vqts6"]
 size = Vector2(2712, 39)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_iw0uq"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nf0ur"]
 size = Vector2(11, 86)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_jau73"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_osk36"]
 size = Vector2(16, 32)
 
-[node name="fields" type="Node2D"]
-script = ExtResource("1_br2kp")
-metadata/_edit_group_ = true
+[node name="castle" type="Node2D"]
+script = ExtResource("1_4g4jk")
 
-[node name="TileMap" parent="." instance=ExtResource("1_uu5f3")]
+[node name="TileMap" parent="." instance=ExtResource("2_6opg2")]
 layer_1/tile_data = PackedInt32Array()
 layer_2/tile_data = PackedInt32Array()
 layer_3/tile_data = PackedInt32Array(131229, 458752, 3, 196765, 458752, 3, 65693, 458752, 3, 157, 458752, 3, -65379, 458752, 3, -130915, 458752, 2)
@@ -26,7 +24,7 @@ layer_4/tile_data = PackedInt32Array(65536, 786432, 6, 65537, 1310720, 5, 65538,
 layer_5/tile_data = PackedInt32Array()
 
 [node name="SpawnPoint" type="Marker2D" parent="TileMap" groups=["SpawnPoint"]]
-position = Vector2(2465, 41)
+position = Vector2(60, 36)
 
 [node name="LevelBounds" type="Area2D" parent="TileMap"]
 collision_layer = 256
@@ -35,7 +33,7 @@ metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/LevelBounds"]
 position = Vector2(1357, 115.5)
-shape = SubResource("RectangleShape2D_fh6c6")
+shape = SubResource("RectangleShape2D_vqts6")
 
 [node name="Goal" type="Area2D" parent="TileMap"]
 z_index = 1
@@ -46,10 +44,13 @@ metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/Goal"]
 position = Vector2(-0.5, -8)
-shape = SubResource("RectangleShape2D_iw0uq")
+shape = SubResource("RectangleShape2D_nf0ur")
 
-[node name="checkpoint" parent="TileMap" instance=ExtResource("3_gj7oj")]
-position = Vector2(1637, 48)
+[node name="checkpoint" parent="TileMap" instance=ExtResource("3_j4dbw")]
+position = Vector2(1146, -176)
+
+[node name="checkpoint2" parent="TileMap" instance=ExtResource("3_j4dbw")]
+position = Vector2(1288, 32)
 
 [node name="demo_room_SpawnPoint" type="Marker2D" parent="TileMap" groups=["SpawnPoint"]]
 position = Vector2(24, 46)
@@ -61,45 +62,4 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/demo_room"]
 position = Vector2(0, -9)
-shape = SubResource("RectangleShape2D_jau73")
-
-[node name="feathers" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(337, 1)
-type = 16
-
-[node name="feathers11" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(679, 41)
-type = 16
-
-[node name="feathers2" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(1096, -59)
-type = 16
-
-[node name="feathers3" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(825, -56)
-type = 16
-
-[node name="feathers4" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(1216, -77)
-type = 16
-
-[node name="feathers5" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(1216, -56)
-type = 16
-
-[node name="feathers6" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(1219, -35)
-type = 16
-
-[node name="feathers7" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(1853, 52)
-
-[node name="feathers8" parent="." groups=["RainbowFeather"] instance=ExtResource("4_c5c6s")]
-position = Vector2(2055, -41)
-type = 48
-
-[node name="feathers9" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(1468, -73)
-
-[node name="feathers10" parent="." instance=ExtResource("4_c5c6s")]
-position = Vector2(1194, -218)
+shape = SubResource("RectangleShape2D_osk36")

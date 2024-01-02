@@ -1,4 +1,4 @@
-class_name Fields extends SpawnHandler
+class_name Mountains extends SpawnHandler
 
 func getTileMap() -> TileMap:
 	return $TileMap
@@ -11,5 +11,5 @@ func getLevelGoal() -> Area2D:
 
 func prepare():
 	for feather in getFeathers():
-		feather.setType(Feather.Type.grey)
+		feather.setType(Feather.Type.brown)
 	super.prepare()

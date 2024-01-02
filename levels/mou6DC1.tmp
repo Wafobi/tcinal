@@ -1,0 +1,62 @@
+[gd_scene load_steps=7 format=3 uid="uid://bf2spjbxednwv"]
+
+[ext_resource type="Script" path="res://levels/mountains.gd" id="1_r2svr"]
+[ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/level.tscn" id="2_cq504"]
+[ext_resource type="PackedScene" uid="uid://dukfbdifltsec" path="res://items/checkpoint.tscn" id="3_q3dyi"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ful43"]
+size = Vector2(2712, 39)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ip4vc"]
+size = Vector2(11, 86)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_athev"]
+size = Vector2(16, 32)
+
+[node name="mountains" type="Node2D"]
+script = ExtResource("1_r2svr")
+
+[node name="TileMap" parent="." instance=ExtResource("2_cq504")]
+layer_1/tile_data = PackedInt32Array()
+layer_2/tile_data = PackedInt32Array()
+layer_3/tile_data = PackedInt32Array(131229, 458752, 3, 196765, 458752, 3, 65693, 458752, 3, 157, 458752, 3, -65379, 458752, 3, -130915, 458752, 2)
+layer_4/tile_data = PackedInt32Array(65536, 983040, 6, 131072, 983040, 6, 131074, 1048576, 65542, 65538, 1048576, 65542, 65537, 1179648, 5, 131073, 1179648, 6, 0, 458752, 0, -65536, 458752, 0, -131072, 458752, 0, -196608, 458752, 0, -262144, 458752, 0, -327680, 458752, 0, -393216, 458752, 0, -458752, 458752, 0, 196608, 0, 5, 196609, 65536, 5, 196610, 131072, 5)
+layer_5/tile_data = PackedInt32Array()
+
+[node name="SpawnPoint" type="Marker2D" parent="TileMap" groups=["SpawnPoint"]]
+position = Vector2(60, 36)
+
+[node name="LevelBounds" type="Area2D" parent="TileMap"]
+collision_layer = 256
+collision_mask = 2
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/LevelBounds"]
+position = Vector2(1357, 115.5)
+shape = SubResource("RectangleShape2D_ful43")
+
+[node name="Goal" type="Area2D" parent="TileMap"]
+z_index = 1
+position = Vector2(2520, 29)
+collision_layer = 1024
+collision_mask = 2
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/Goal"]
+position = Vector2(-0.5, -8)
+shape = SubResource("RectangleShape2D_ip4vc")
+
+[node name="checkpoint" parent="TileMap" instance=ExtResource("3_q3dyi")]
+position = Vector2(1146, -176)
+
+[node name="demo_room_SpawnPoint" type="Marker2D" parent="TileMap" groups=["SpawnPoint"]]
+position = Vector2(24, 46)
+
+[node name="demo_room" type="Area2D" parent="TileMap" groups=["door"]]
+position = Vector2(24, 41)
+collision_layer = 16
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TileMap/demo_room"]
+position = Vector2(0, -9)
+shape = SubResource("RectangleShape2D_athev")

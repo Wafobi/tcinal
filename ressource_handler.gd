@@ -29,10 +29,18 @@ func addLevel(levelName : String):
 	addSaveFile(levelName)
 	resources.merge(levels)
 
+func addItem(itemName : String):
+	resources[itemName] = "items/"+itemName
+
 func _ready():
 	addCharacter("player")
+
 	addLevel("demo_room")
 	addLevel("fields")
+	addLevel("mountains")
+
+	addItem("feathers")
+	addItem("checkpoint")
 	resources.merge(levels, true)
 	resources.merge(characters, true)
 

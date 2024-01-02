@@ -10,6 +10,12 @@ var player : Player = null
 func getTileMap() -> TileMap:
 	return null
 
+func getLevelBounds() -> Area2D:
+	return null
+
+func getLevelGoal() -> Area2D:
+	return null
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	leaving_level = false
@@ -23,10 +29,47 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
+	
+func respawnPlayer():
+	print("player respawning")
+	if Checkpoints.last_checkpoint:
+		player.spawn(Checkpoints.last_checkpoint)
+	else:
+		player.spawn(Checkpoints.levelspawn)
+	respawning = false
+
+var respawning = false
+func levelBoundsHit(body):
+	if body is Player and not leaving_level and not respawning:
+		respawning = true
+		call_deferred("respawnPlayer")
 
 func prepare():
-	pass
+	for feather in getRainbowFeathers():
+		feather.setType(Feather.Type.rainbow)
+	var lb = getLevelBounds()
+	if lb:
+		lb.body_entered.connect(levelBoundsHit)
+		lb.collision_layer = 0
+		lb.collision_mask = 0
+		lb.set_collision_layer_value(9, true)
+		lb.set_collision_mask_value(2, true)
+		print("level bounds setup")
 
+	var goal = getLevelGoal()
+	if goal:
+		goal.z_index = 1
+		goal.collision_layer = 0
+		goal.collision_mask = 0
+		goal.set_collision_layer_value(11, true)
+		goal.set_collision_mask_value(2, true)
+		print("goal setup")
+
+func getFeathers() -> Array:
+	return getTileMap().get_tree().get_nodes_in_group("Feather")
+	
+func getRainbowFeathers() -> Array:
+	return getTileMap().get_tree().get_nodes_in_group("RainbowFeather")
 
 func getSpawnPoints() -> Array:
 	return getTileMap().get_tree().get_nodes_in_group("SpawnPoint")
@@ -76,13 +119,6 @@ func _input(_event):
 						doorSignal.emit(door.name, name+"_SpawnPoint")
 						return
 
-func respawnPlayer():
-	print("player respawning")
-	if Checkpoints.last_checkpoint:
-		player.spawn(Checkpoints.last_checkpoint)
-	else:
-		player.spawn(Checkpoints.levelspawn)
-
-func _on_level_bounds_body_exited(body):
-	if body is Player and not leaving_level:
-		call_deferred("respawnPlayer")
+func _on_goal_body_entered(body):
+	if body is Player:
+		levelDone.emit(name)
