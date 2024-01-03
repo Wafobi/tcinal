@@ -31,9 +31,20 @@ func loadplayer():
 	player.setupDone.connect(onPlayerSetupDone)
 
 func onPlayerSetupDone():
-	print("Player ready")
+	print("Player ready in ", level.name)
 	player.active = true
 	levelTime = 0.0
+	var levelLabel : Label = getLevelLabel()
+	var highScoreLabel : Label = getHighScoreLabel()
+	match level.name:
+		"demo_room" :
+			updateHighScoreLabel()
+			levelLabel.hide()
+			highScoreLabel.show()
+		_ :
+			updateLevelLabel()
+			highScoreLabel.hide()
+			levelLabel.show()
 
 func _process(delta):
 	levelTime += delta
@@ -82,6 +93,7 @@ var points = 0
 func featherCollected(feather : Feather):
 	levelPoints += feather.points
 	points += feather.points
+	updateLevelLabel()
 	print("Player collected feather")
 
 func levelDone(levelName):
@@ -90,3 +102,16 @@ func levelDone(levelName):
 	player.gravity = 50
 	print("Player finish ", levelName, " duration ", levelTime, " points from level ", levelPoints, " all points ", points)
 
+func updateLevelLabel():
+	var levelLabel = getLevelLabel()
+	levelLabel.text = level.name + ": Points: " + var_to_str(levelPoints)
+
+func updateHighScoreLabel():
+	var highscoreLabel = getHighScoreLabel()
+	highscoreLabel.text = "Points: " + var_to_str(points)
+	
+func getHighScoreLabel() -> Label :
+	return $CanvasLayer/MarginContainer/Highscore/HighScorePoints
+	
+func getLevelLabel() -> Label :
+	return $CanvasLayer/MarginContainer/LevelStats/LevelPoints

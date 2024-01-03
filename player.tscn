@@ -108,28 +108,34 @@ collision_mask = 1845
 slide_on_ceiling = false
 floor_stop_on_slope = false
 script = ExtResource("1_vduj5")
-metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_1wky6")
 animation = &"walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 0.5)
+position = Vector2(0, -7.5)
 shape = SubResource("RectangleShape2D_00euy")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(5, 5)
 position_smoothing_speed = 10.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_vertical_offset = -1.0
+drag_top_margin = 0.45
 
 [node name="Coyote Timer" type="Timer" parent="."]
 wait_time = 0.1
 one_shot = true
 
 [node name="wallDetector" type="RayCast2D" parent="."]
+position = Vector2(0, -8)
 target_position = Vector2(5, 0)
 
 [node name="Hitbox" type="Area2D" parent="."]
+position = Vector2(0, -8)
 collision_layer = 2
 collision_mask = 4
 
