@@ -33,11 +33,13 @@ func addItem(itemName : String):
 	resources[itemName] = "items/"+itemName
 
 func _ready():
+	#make this more dynamic
 	addCharacter("player")
 
 	addLevel("demo_room")
 	addLevel("fields")
 	addLevel("mountains")
+	addLevel("castle")
 
 	addItem("feathers")
 	addItem("checkpoint")

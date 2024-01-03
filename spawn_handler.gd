@@ -15,6 +15,9 @@ func getLevelBounds() -> Area2D:
 
 func getLevelGoal() -> Area2D:
 	return null
+	
+func requirements() -> Array:
+	return []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -47,6 +50,10 @@ func levelBoundsHit(body):
 func goalReched(body):
 	if body is Player:
 		levelDone.emit(name)
+
+func setFeatherType(ft):
+	for feather in getFeathers():
+		feather.setType(ft)
 
 func prepare():
 	for feather in getRainbowFeathers():

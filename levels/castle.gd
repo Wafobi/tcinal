@@ -7,6 +7,5 @@ func getLevelBounds() -> Area2D:
 	return $TileMap/LevelBounds
 
 func prepare():
-	for feather in getFeathers():
-		feather.setType(Feather.Type.white)
+	setFeatherType(Feather.Type.white)
 	super.prepare()

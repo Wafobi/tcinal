@@ -10,10 +10,10 @@ var can_coyote_jump = false
 var jump_buffer = 0
 var jumping = false
 
-var has_double_jump = true
+var has_double_jump = false
 var has_dash = false
-var has_wall_slide = true
-var has_wall_jump = true
+var has_wall_slide = false
+var has_wall_jump = false
 
 var fatal_y_velocity = 410 #TODO let player take fall damange
 
@@ -114,23 +114,9 @@ func move(delta):
 				else:
 					state = states.AIR
 				return
-			if has_wall_jump:
-				if Input.is_action_just_pressed("jump") and view_direction != direction:
-					velocity.y = jump_velocity
-					if Input.is_action_pressed("run"):
-						velocity.y = jump_velocity * 0.5
-					if looks_left():
-						velocity.x = 100
-						direction.x = 1
-					if looks_right():
-						velocity.x = -100
-						direction.x = -1
-					state = states.AIR
-					return
-			if has_wall_slide:
-				velocity.y = 100 #slow us waaayy down
-				if Input.is_action_pressed("run"):
-					velocity.y = 200
+			wallSlide()
+			if wallJump():
+				state = states.AIR
 		states.AIR:
 			if is_on_floor():
 				state = states.FLOOR
@@ -138,12 +124,17 @@ func move(delta):
 			elif is_near_wall():
 				state = states.WALL
 				return
+			if Input.is_action_just_pressed("jump"):
+				if (can_coyote_jump or can_double_jump()):
+					jump()
+					state = states.JUMP
+					return
+				else:
+					jump_buffer = 0.1
+			elif Input.is_action_just_pressed("dash"):
+				dash()
 			if direction.x:
 				velocity.x = direction.x * speed #do lerp
-			if Input.is_action_just_pressed("jump") and (can_coyote_jump or can_double_jump()):
-				jump()
-			if Input.is_action_just_pressed("dash") and has_dash:
-				pass
 		states.JUMP:
 			if is_near_wall() and velocity.y >= 0:
 				state = states.WALL
@@ -152,7 +143,9 @@ func move(delta):
 				state = states.AIR
 				return
 			if Input.is_action_just_pressed("jump") and can_double_jump():
-				jump()
+				jump() #we stay in jump state
+			elif Input.is_action_just_pressed("dash"):
+				dash()
 			if direction.x:
 				velocity.x = direction.x * speed
 		states.FLOOR:
@@ -162,22 +155,47 @@ func move(delta):
 				state = states.AIR
 				coyote()
 				return
-			if Input.is_action_pressed("run"):
-				speed *= 1.5
-			if direction.x:
-				velocity.x = direction.x * speed
 			if Input.is_action_just_pressed("jump") or jump_buffer > 0:
 				jump()
 				state = states.JUMP
 				return
-			if Input.is_action_just_pressed("dash") and has_dash:
-				# see https://www.youtube.com/watch?v=Q2oRzUXB27w&t=58s
+			if Input.is_action_just_pressed("dash"):
+				dash()
 				pass
+			if Input.is_action_pressed("run"):
+				speed *= 1.5
+			if direction.x:
+				velocity.x = direction.x * speed
 	jump_buffer-=delta
+
+func wallSlide():
+	if has_wall_slide:
+		velocity.y = 100 #slow us waaayy down
+		if Input.is_action_pressed("run"):
+			velocity.y = 200
+
+func wallJump() -> bool:
+	if has_wall_jump:
+		if Input.is_action_just_pressed("jump") and view_direction != direction:
+			velocity.y = jump_velocity
+			if Input.is_action_pressed("run"):
+				velocity.y = jump_velocity * 0.5
+			if looks_left():
+				velocity.x = 100
+				direction.x = 1
+			if looks_right():
+				velocity.x = -100
+				direction.x = -1
+			return true
+	return false
+
+func dash():
+# see https://www.youtube.com/watch?v=Q2oRzUXB27w&t=58s
+	if has_dash:
+		pass
 
 func jump():
 	jump_count += 1
-	jump_buffer = 0.1
 	velocity.y = jump_velocity
 
 func getGravity(delta):

@@ -10,6 +10,5 @@ func getLevelGoal() -> Area2D:
 	return $TileMap/Goal
 
 func prepare():
-	for feather in getFeathers():
-		feather.setType(Feather.Type.grey)
+	setFeatherType(Feather.Type.grey)
 	super.prepare()
