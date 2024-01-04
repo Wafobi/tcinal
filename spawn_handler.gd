@@ -81,6 +81,9 @@ func prepare():
 		goal.body_entered.connect(goalReched)
 		print("goal setup")
 
+func getFrogs() -> Array:
+	return getTileMap().get_tree().get_nodes_in_group("Frog")
+
 func getFeathers() -> Array:
 	return getTileMap().get_tree().get_nodes_in_group("Feather")
 	
