@@ -58,7 +58,6 @@ func loadPlayer():
 
 func onPlayerSetupDone():
 	print("Player ready in ", level.name)
-	fadeOut()
 	match level.name:
 		"demo_room" :
 			updateHighScoreLabel()
@@ -68,9 +67,9 @@ func onPlayerSetupDone():
 			highScore.hide()
 			levelStats.show()
 			updateLevelLabel()
+	fadeOut()
 
 func activatePlayer():
-	print("GO")
 	if player:
 		player.active = true
 
@@ -117,14 +116,21 @@ func levelCreated():
 	level.prepare()
 	for feather : Feather in level.getFeathers():
 		feather.collected.connect(featherCollected)
+	for frog : Frog in level.getFrogs():
+		frog.killed.connect(frogKilled)
 	print("W: created ", level.name, " with ", levelFeatherCount)
 	print("W: searching ", spawnPoint)
 	for sp in level.getSpawnPoints():
 		if sp.name == spawnPoint:
 			Checkpoints.levelspawn = sp.position
+			player.position = sp.position
 			print("Player going to spawn in ", level.name, " at ", sp.name, " ", var_to_str(sp.position))
-			level.setupPlayer(player, sp.position)
+			level.setupPlayer(player)
 			return
+
+func frogKilled():
+	levelPoints += 2
+	updateLevelLabel()
 
 var levelPoints = 0
 var points = 0
@@ -132,7 +138,6 @@ var feathers = 0
 func featherCollected(feather : Feather):
 	feathers+=1
 	levelPoints += feather.points
-	points += feather.points
 	updateLevelLabel()
 
 func levelDone(levelName):
@@ -143,6 +148,7 @@ func levelDone(levelName):
 	Points Collected: %d
 	Feathers collected %d / %d""" % [levelName, int(levelTime), levelPoints, feathers, levelFeatherCount]
 	fadeIn()
+	points += levelPoints
 	levelStats.hide()
 	levelEndScreen.show()
 	player.position.x -= 2 #TODO this is a hack ... to prevent the restored player from instantly hitting the chicken

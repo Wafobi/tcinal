@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://dlkk3uma7k4ph"]
+
+[ext_resource type="Script" path="res://items/frog_spit.gd" id="1_c26wu"]
+[ext_resource type="Texture2D" uid="uid://c3gvn83wjfty2" path="res://assets/spit.png" id="2_b15w6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c7p25"]
+atlas = ExtResource("2_b15w6")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_na0bs"]
+radius = 3.0
+height = 8.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_innyh"]
+radius = 4.0
+height = 8.0
+
+[node name="frog_spit" type="RigidBody2D"]
+collision_layer = 128
+collision_mask = 3
+mass = 0.01
+gravity_scale = 0.1
+can_sleep = false
+script = ExtResource("1_c26wu")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_c7p25")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_na0bs")
+
+[node name="hitbox" type="Area2D" parent="."]
+collision_layer = 128
+collision_mask = 19
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
+position = Vector2(-1, 0)
+shape = SubResource("CapsuleShape2D_innyh")
+
+[connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]

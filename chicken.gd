@@ -16,6 +16,15 @@ var reward = {
 	Feather.Type.white : "wall_jump",
 }
 
+signal loaded
+
+func _ready():
+	call_deferred("setup")
+
+func setup():
+	await get_tree().physics_frame
+	loaded.emit()
+
 func setType(featherType : Feather.Type):
 	type = featherType
 	var sprite :Sprite2D = $Sprite2D

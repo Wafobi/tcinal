@@ -14,4 +14,9 @@ func prepare():
 	var chicken : Chicken = $TileMap/chicken
 	setFeatherType(Feather.Type.white)
 	chicken.setType(Feather.Type.white)
+	chicken.set_owner(getTileMap())
+	for frog in getFrogs():
+		frog.setType(Frog.Type.fire)
+		frog.set_owner(getTileMap())
+	
 	super.prepare()

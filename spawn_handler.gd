@@ -22,6 +22,14 @@ func getReward() -> String:
 func requirements() -> Array:
 	return []
 
+
+var levelEntitiesLoaded : int = 0
+var levelEntities : int = 0
+func entityLoaded():
+	levelEntitiesLoaded += 1
+	if levelEntities == levelEntitiesLoaded:
+		loaded.emit()
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	leaving_level = false
@@ -30,7 +38,13 @@ func _ready():
 		door.set_collision_layer_value(5,true)
 		door.set_collision_mask_value(2,true)
 		door.z_index = 0
-	loaded.emit()
+
+	levelEntities = getEntities().size()
+	if levelEntities > 0:
+		for entity in getEntities():
+			entity.loaded.connect(entityLoaded)
+	else:
+		loaded.emit()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -39,9 +53,9 @@ func _process(_delta):
 func respawnPlayer():
 	print("player respawning")
 	if Checkpoints.last_checkpoint:
-		player.spawn(Checkpoints.last_checkpoint)
+		player.position = Checkpoints.last_checkpoint
 	else:
-		player.spawn(Checkpoints.levelspawn)
+		player.position = Checkpoints.levelspawn
 	respawning = false
 
 var respawning = false
@@ -81,6 +95,9 @@ func prepare():
 		goal.body_entered.connect(goalReched)
 		print("goal setup")
 
+func getEntities() -> Array:
+	return getTileMap().get_tree().get_nodes_in_group("entity")
+
 func getFrogs() -> Array:
 	return getTileMap().get_tree().get_nodes_in_group("Frog")
 
@@ -102,10 +119,11 @@ func getDoors() -> Array:
 func getAIWalkPoints() -> Array:
 	return getTileMap().get_tree().get_nodes_in_group("aiWalkpoint")
 
-func setupPlayer(newPlayer : Player, coords : Vector2):
+func setupPlayer(newPlayer : Player):
 	if newPlayer:
 		player = newPlayer
-		setupBody(player,coords)
+		setupBody(player)
+		player.spawn()
 
 func cleanup(defer = false):
 	queue_free()
@@ -113,11 +131,12 @@ func cleanup(defer = false):
 		removeBody(player,defer)
 		player = null
 
-func setupBody(body,coords):
+func setupBody(body,coords : Vector2 = Vector2.ZERO):
 	getTileMap().add_child(body)
 	getTileMap().move_child(body,-1)
 	body.set_owner(getTileMap())
-	body.spawn(coords)
+	if coords:
+		body.spawn(coords)
 	
 func removeBody(body, defer=false):
 	if defer:

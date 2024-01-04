@@ -51,7 +51,7 @@ _data = {
 "idle": SubResource("Animation_exydf")
 }
 
-[node name="chicken" type="CharacterBody2D"]
+[node name="chicken" type="CharacterBody2D" groups=["entity"]]
 z_index = 1
 script = ExtResource("1_ycsa4")
 

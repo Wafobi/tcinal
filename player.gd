@@ -22,7 +22,7 @@ var state : states = states.AIR
 
 var wallDetector : RayCast2D
 
-var health :float = 3
+var health :float
 
 var default_speed : float = 100.0
 var jump_velocity : float = -300.0
@@ -210,9 +210,8 @@ func looks_right() -> bool :
 func looks_left() -> bool :
 	return view_direction.x < 0
 
-func spawn(coords):
+func spawn():
 	gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-	position = coords
 	velocity = Vector2.ZERO
 	fall_velocity = 0
 	call_deferred("setup")
@@ -226,4 +225,8 @@ func _input(_event):
 	pass
 
 func _on_hitbox_body_entered(body):
-	print(name, " was hit by ", body.name)
+	if body is FrogSpit:
+		health -= body.damage
+		print("Player hit by ", body.name, " - suffered ", body.damage, " damange. Remaining Health ", health)
+		body.destroy()
+

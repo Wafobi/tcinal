@@ -1,7 +1,7 @@
 extends Node2D
 
 var game_settings = {
-	save_game = true
+	save_game = false
 }
 
 var resources = {}
@@ -44,6 +44,9 @@ func _ready():
 
 	addItem("feathers")
 	addItem("checkpoint")
+	addItem("frog_spit")
+	addItem("frog_acid")
+	addItem("frog_fire")
 
 	resources.merge(levels, true)
 	resources.merge(characters, true)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d4gf271g24l2d"]
+[gd_scene load_steps=10 format=3 uid="uid://d4gf271g24l2d"]
 
 [ext_resource type="Texture2D" uid="uid://batbe7a5n84q0" path="res://assets/froggy.png" id="1_osq5x"]
 [ext_resource type="Script" path="res://frog.gd" id="1_tkj1u"]
@@ -10,8 +10,23 @@ size = Vector2(13, 11)
 atlas = ExtResource("1_osq5x")
 region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_36jrc"]
-size = Vector2(60, 11)
+[sub_resource type="CircleShape2D" id="CircleShape2D_pjy87"]
+radius = 55.1928
+
+[sub_resource type="Animation" id="Animation_tsd1k"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(0, 0, 16, 16)]
+}
 
 [sub_resource type="Animation" id="Animation_71354"]
 resource_name = "idle"
@@ -30,28 +45,16 @@ tracks/0/keys = {
 "values": [Rect2(0, 0, 16, 16), Rect2(0, 16, 16, 16), Rect2(0, 32, 16, 16), Rect2(0, 48, 16, 16), Rect2(0, 32, 16, 16), Rect2(0, 16, 16, 16)]
 }
 
-[sub_resource type="Animation" id="Animation_tsd1k"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture:region")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Rect2(0, 0, 16, 16)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bfrlm"]
 _data = {
 "RESET": SubResource("Animation_tsd1k"),
 "idle": SubResource("Animation_71354")
 }
 
-[node name="frog" type="CharacterBody2D" groups=["Frog"]]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ffjo"]
+size = Vector2(11, 7)
+
+[node name="frog" type="CharacterBody2D" groups=["Frog", "entity"]]
 script = ExtResource("1_tkj1u")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -63,12 +66,32 @@ position = Vector2(0, -5)
 texture = SubResource("AtlasTexture_htkk7")
 
 [node name="aggroRange" type="Area2D" parent="."]
+collision_layer = 8257
+collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="aggroRange"]
 position = Vector2(0, -5.5)
-shape = SubResource("RectangleShape2D_36jrc")
+shape = SubResource("CircleShape2D_pjy87")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_bfrlm")
 }
+
+[node name="shootTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 65
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.5, -8.5)
+shape = SubResource("RectangleShape2D_0ffjo")
+
+[node name="LineOfSight" type="RayCast2D" parent="."]
+
+[connection signal="body_entered" from="aggroRange" to="." method="_on_aggro_range_body_entered"]
+[connection signal="body_exited" from="aggroRange" to="." method="_on_aggro_range_body_exited"]
+[connection signal="timeout" from="shootTimer" to="." method="_on_shoot_timer_timeout"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
