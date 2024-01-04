@@ -15,7 +15,10 @@ func getLevelBounds() -> Area2D:
 
 func getLevelGoal() -> Area2D:
 	return null
-	
+
+func getReward() -> String:
+	return ""
+
 func requirements() -> Array:
 	return []
 

@@ -7,8 +7,11 @@ func getLevelBounds() -> Area2D:
 	return $TileMap/LevelBounds
 
 func getLevelGoal() -> Area2D:
-	return $TileMap/Goal
+	var chicken : Chicken = $TileMap/chicken
+	return chicken.getHitBox()
 
 func prepare():
 	setFeatherType(Feather.Type.grey)
+	var chicken : Chicken = $TileMap/chicken
+	chicken.setType(Feather.Type.grey)
 	super.prepare()

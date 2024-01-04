@@ -1,0 +1,78 @@
+[gd_scene load_steps=9 format=3 uid="uid://cljd730g31gmq"]
+
+[ext_resource type="Script" path="res://chicken.gd" id="1_ycsa4"]
+[ext_resource type="Texture2D" uid="uid://cf7qfx4ohd634" path="res://assets/chickens.png" id="2_s4ngb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w7um8"]
+size = Vector2(13, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wy4uu"]
+atlas = ExtResource("2_s4ngb")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nf8y5"]
+size = Vector2(15, 14)
+
+[sub_resource type="Animation" id="Animation_exydf"]
+resource_name = "idle"
+length = 0.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Rect2(0, 0, 16, 16), Rect2(0, 16, 16, 16), Rect2(0, 32, 16, 16), Rect2(0, 16, 16, 16)]
+}
+
+[sub_resource type="Animation" id="Animation_pdagk"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(0, 0, 16, 16)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_grk14"]
+_data = {
+"RESET": SubResource("Animation_pdagk"),
+"idle": SubResource("Animation_exydf")
+}
+
+[node name="chicken" type="CharacterBody2D"]
+z_index = 1
+script = ExtResource("1_ycsa4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, -6.5)
+shape = SubResource("RectangleShape2D_w7um8")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -8)
+texture = SubResource("AtlasTexture_wy4uu")
+flip_h = true
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 1024
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.5, -7)
+shape = SubResource("RectangleShape2D_nf8y5")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_grk14")
+}

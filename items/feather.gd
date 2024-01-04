@@ -11,6 +11,8 @@ func setType(featherType):
 	type = featherType
 	var sprite = $Sprite2D
 	sprite.set_region_rect(Rect2(type, 0, 16, 16))
+	if type == Type.rainbow:
+		points = 100
 
 func _on_body_entered(body):
 	if body is Player:

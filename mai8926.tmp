@@ -34,28 +34,5 @@ offset_bottom = 23.0
 [node name="LevelEndScreen" type="Control" parent="CanvasLayer/MarginContainer"]
 layout_mode = 2
 
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/MarginContainer/LevelEndScreen"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer"]
-layout_mode = 2
-text = "Test Text"
-
-[node name="Button" type="Button" parent="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer"]
-layout_mode = 2
-size_flags_vertical = 4
-text = "Ok"
-
 [node name="Main Menu" type="Control" parent="CanvasLayer/MarginContainer"]
 layout_mode = 2
-
-[node name="Timer" type="Timer" parent="."]
-autostart = true
-
-[connection signal="pressed" from="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Button" to="." method="_on_level_done_button_pressed"]
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

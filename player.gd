@@ -5,27 +5,27 @@ signal setupDone
 signal checkPoint
 
 var coyote_timer : Timer
-var coyote_time = 0.1
-var can_coyote_jump = false
-var jump_buffer = 0
-var jumping = false
+var coyote_time :float = 0.15
+var can_coyote_jump : bool = false
+var jump_buffer :float = 0
+var jumping : bool = false
 
-var has_double_jump = false
-var has_dash = false
-var has_wall_slide = false
-var has_wall_jump = false
+var has_double_jump : bool = false
+var has_dash : bool = false
+var has_wall_slide : bool = false
+var has_wall_jump : bool = false
 
 var fatal_y_velocity = 410 #TODO let player take fall damange
 
 enum states {FLOOR = 1, JUMP, AIR, WALL}
-var state = states.AIR
+var state : states = states.AIR
 
 var wallDetector : RayCast2D
 
 var health :float = 3
 
-var default_speed = 100.0
-var jump_velocity = -300.0
+var default_speed : float = 150.0
+var jump_velocity : float = -300.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -33,7 +33,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var direction : Vector2 = Vector2.ZERO
 var view_direction : Vector2 = Vector2.ZERO
 
-var active
+var active : bool
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

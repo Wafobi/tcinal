@@ -19,6 +19,7 @@ config/icon="res://assets/icon.png"
 [autoload]
 
 Checkpoints="*res://checkpoints.gd"
+SzeneTransition="*res://szene_transition.tscn"
 
 [display]
 
