@@ -1,4 +1,4 @@
-class_name Main extends ResourceHandler
+class_name Main extends Node2D
 
 # for menu see https://www.youtube.com/watch?v=Ueivz6JY5Fw
 # for paralex background : https://www.youtube.com/watch?v=f8z4x6R7OSM
@@ -9,52 +9,74 @@ var player : Player
 
 var levelTime : float
 
-func saveLevel():
-	saveNode(level,saveFiles[level.name])
+var mainMenu : Control
+var levelEndScreen : Control
 
-func saveplayer():
-	saveNode(player, playerSaveFile)
+var highScore : Control
+var levelStats : Control
+
+var highScoreLabel : Label
+var levelLabel : Label
+
+var levelEndScreenLabel : Label
+
+var loadSavedGameButton : Button
+
+func savePlayer():
+	ResourceHandler.saveNode(player)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	mainMenu = $"CanvasLayer/MarginContainer/Main Menu"
+	highScore = $CanvasLayer/MarginContainer/Highscore
+	levelStats = $CanvasLayer/MarginContainer/LevelStats
+	levelEndScreen = $CanvasLayer/MarginContainer/LevelEndScreen
+	
+	highScoreLabel = $CanvasLayer/MarginContainer/Highscore/HighScorePoints
+	levelLabel = $CanvasLayer/MarginContainer/LevelStats/LevelPoints
+	levelEndScreenLabel = $CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Label
+	levelEndScreen.hide()
+	levelStats.hide()
+	highScore.hide()
+	mainMenu.show()
+
+	loadSavedGameButton = $"CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue"
+	loadSavedGameButton.hide()
+	if ResourceHandler.saveFileExists("player"):
+		loadSavedGameButton.show()
+
 	levelTime = 0.0
 	level = null
 	spawnPoint = ""
 	player = null
-	super._ready()
-	loadplayer()
 	SzeneTransition.done.connect(activatePlayer)
-	szeneTransition("fields")
 
-func loadplayer():
-	player = loadIfSaveFileExists("player")
+func loadPlayer():
+	player = ResourceHandler.loadIfSaveFileExists("player")
 	player.dead.connect(onPlayerDeath)
 	player.setupDone.connect(onPlayerSetupDone)
 
 func onPlayerSetupDone():
 	print("Player ready in ", level.name)
-	var levelLabel : Label = getLevelLabel()
-	var highScoreLabel : Label = getHighScoreLabel()
+	fadeOut()
 	match level.name:
 		"demo_room" :
 			updateHighScoreLabel()
-			levelLabel.hide()
-			highScoreLabel.show()
+			levelStats.hide()
+			highScore.show()
 		_ :
+			highScore.hide()
+			levelStats.show()
 			updateLevelLabel()
-			highScoreLabel.hide()
-			levelLabel.show()
 
 func activatePlayer():
 	print("GO")
-	player.active = true
+	if player:
+		player.active = true
 
 func _process(delta):
-	if player.active:
+	if player and player.active:
 		levelTime += delta
-
-func onPlayerDeath():
-	szeneTransition("demo_room")
 
 func fadeIn():
 	SzeneTransition.fadeIn()
@@ -68,13 +90,9 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 	if not toSzene:
 		return
 	fadeIn()
-	var new_level = loadIfSaveFileExists(toSzene)
+	var new_level = ResourceHandler.instantiate_resource(toSzene)
 	if new_level:
-		if player:
-			player.active = false
-			saveplayer()
 		if level:
-			saveLevel()
 			print("M: cleanup for " + level.name)
 			level.cleanup(false)
 			remove_child(level)
@@ -89,22 +107,23 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 		fadeOut()
 		print(toSzene, " not found")
 
+var levelFeatherCount = 0
 func levelCreated():
 	levelTime = 0.0
 	levelPoints = 0
 	feathers = 0
+	levelFeatherCount = level.getFeathers().size()
 	level.doorSignal.connect(szeneTransition)
 	level.prepare()
 	for feather : Feather in level.getFeathers():
 		feather.collected.connect(featherCollected)
-	print("W: created ", level.name)
+	print("W: created ", level.name, " with ", levelFeatherCount)
 	print("W: searching ", spawnPoint)
 	for sp in level.getSpawnPoints():
 		if sp.name == spawnPoint:
 			Checkpoints.levelspawn = sp.position
 			print("Player going to spawn in ", level.name, " at ", sp.name, " ", var_to_str(sp.position))
 			level.setupPlayer(player, sp.position)
-			fadeOut()
 			return
 
 var levelPoints = 0
@@ -118,31 +137,45 @@ func featherCollected(feather : Feather):
 
 func levelDone(levelName):
 	player.active = false
-	player.velocity = Vector2.ZERO
-	player.gravity = 50
-	print("Player finish ", levelName, " duration ", int(levelTime))
-	print(" points from level ", levelPoints, " all points ", points)
-	print(" Feathers: ", feathers, "/", len(level.getFeathers()))
-#	levelLabel.hide()
-#	highScoreLabel.hide()
-
+	levelEndScreenLabel.text = """Congratulations
+	You finished the level %s.
+	Time %d seconds
+	Points Collected: %d
+	Feathers collected %d / %d""" % [levelName, int(levelTime), levelPoints, feathers, levelFeatherCount]
+	fadeIn()
+	levelStats.hide()
+	levelEndScreen.show()
+	player.position.x -= 2 #TODO this is a hack ... to prevent the restored player from instantly hitting the chicken
+	savePlayer()
 
 func updateLevelLabel():
-	var levelLabel = getLevelLabel()
-	levelLabel.text = level.name + ": Points: " + var_to_str(levelPoints) + " Time: " + var_to_str(int(levelTime))
+	if level:
+		levelLabel.text = level.name + ": Points: " + var_to_str(levelPoints) + " Time: " + var_to_str(int(levelTime))
 
 func updateHighScoreLabel():
-	var highscoreLabel = getHighScoreLabel()
-	highscoreLabel.text = "Points: " + var_to_str(points)
-
-func getHighScoreLabel() -> Label :
-	return $CanvasLayer/MarginContainer/Highscore/HighScorePoints
-
-func getLevelLabel() -> Label :
-	return $CanvasLayer/MarginContainer/LevelStats/LevelPoints
+	highScoreLabel.text = "Points: " + var_to_str(points)
 
 func _on_timer_timeout():
 	updateLevelLabel()
 
+func loadMainRoom():
+	szeneTransition("demo_room")
+
+func onPlayerDeath():
+	loadMainRoom()
+
+func startGame():
+	mainMenu.hide()
+	loadPlayer()
+	loadMainRoom()
+
 func _on_level_done_button_pressed():
-	call_deferred("szeneTransition","demo_room")
+	call_deferred("loadMainRoom")
+	levelEndScreen.hide()
+
+func _on_continue_pressed():
+	call_deferred("startGame")
+
+func _on_new_game_pressed():
+	ResourceHandler.prune()
+	call_deferred("startGame")

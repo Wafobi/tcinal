@@ -1,4 +1,4 @@
-class_name SpawnHandler extends ResourceHandler
+class_name SpawnHandler extends Node2D
 
 signal loaded
 signal doorSignal
@@ -51,6 +51,7 @@ func levelBoundsHit(body):
 		call_deferred("respawnPlayer")
 
 func goalReched(body):
+	print("player hit goal")
 	if body is Player:
 		levelDone.emit(name)
 

@@ -10,12 +10,12 @@ var can_coyote_jump : bool = false
 var jump_buffer :float = 0
 var jumping : bool = false
 
-var has_double_jump : bool = false
+@export var has_double_jump : bool = false
+@export var has_wall_slide : bool = false
+@export var has_wall_jump : bool = false
 var has_dash : bool = false
-var has_wall_slide : bool = false
-var has_wall_jump : bool = false
 
-var fatal_y_velocity = 410 #TODO let player take fall damange
+var fatal_y_velocity = 410 #TODO let player take better fall damange
 
 enum states {FLOOR = 1, JUMP, AIR, WALL}
 var state : states = states.AIR
@@ -24,7 +24,7 @@ var wallDetector : RayCast2D
 
 var health :float = 3
 
-var default_speed : float = 150.0
+var default_speed : float = 100.0
 var jump_velocity : float = -300.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.

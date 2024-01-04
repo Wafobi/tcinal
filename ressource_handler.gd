@@ -1,7 +1,7 @@
-class_name ResourceHandler extends Node2D
+extends Node2D
 
 var game_settings = {
-	save_game = false
+	save_game = true
 }
 
 var resources = {}
@@ -11,14 +11,15 @@ var characters = {}
 
 var saveFiles = {}
 
-var worldName="my_world"
+var worldName="demo_world"
 
 var saveFolder="user://"+worldName+"/"
-var worldMapSaveFile=saveFolder+"map.tscn"
-var playerSaveFile=saveFolder+"player.tscn"
 
-func addSaveFile(fileName : String):
-	saveFiles[fileName] = saveFolder+fileName
+func addSaveFile(nodeName : String):
+	saveFiles[nodeName] = saveFolder+nodeName+".tscn"
+
+func getSaveFileName(nodeName : String):
+	return saveFiles[nodeName]
 
 func addCharacter(charName : String):
 	characters[charName] = charName
@@ -43,6 +44,7 @@ func _ready():
 
 	addItem("feathers")
 	addItem("checkpoint")
+
 	resources.merge(levels, true)
 	resources.merge(characters, true)
 
@@ -51,11 +53,19 @@ func instantiate_resource(resource_name):
 		return load(resources[resource_name]+".tscn").instantiate()
 	return null
 
+func prune():
+	if DirAccess.dir_exists_absolute(saveFolder):
+		OS.move_to_trash(ProjectSettings.globalize_path(saveFolder))
+
+func saveFileExists(szene):
+	var saveFileName = getSaveFileName(szene)
+	print("Looking for SaveFile: ", saveFileName)
+	return FileAccess.file_exists(saveFileName)
+
 func loadIfSaveFileExists(szene):
 	var resource = instantiate_resource(szene)
 	if game_settings.save_game:
-		var saveFileName = saveFiles[szene]
-		print("Looking for SaveFile: ", saveFileName)
+		var saveFileName = getSaveFileName(szene)
 		if FileAccess.file_exists(saveFileName):
 			print("M: loading saved ", resource.name)
 			return load(saveFileName).instantiate()
@@ -64,11 +74,12 @@ func loadIfSaveFileExists(szene):
 		return resource
 	return null
 
-func saveNode(node : Node , fileName : String):
+func saveNode(node : Node):
 	if game_settings.save_game:
 		if not DirAccess.dir_exists_absolute(saveFolder):
 			DirAccess.make_dir_absolute(saveFolder)
 		var save = PackedScene.new()
 		save.pack(node)
+		var fileName = getSaveFileName(node.name)
+		print("saving ", fileName)
 		ResourceSaver.save(save, fileName);
-

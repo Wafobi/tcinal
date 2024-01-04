@@ -5,6 +5,9 @@
 [node name="main" type="Node2D"]
 script = ExtResource("1_gbal1")
 
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
@@ -15,6 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Highscore" type="Control" parent="CanvasLayer/MarginContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HighScorePoints" type="Label" parent="CanvasLayer/MarginContainer/Highscore"]
@@ -24,27 +28,37 @@ offset_bottom = 23.0
 text = "Highscore"
 
 [node name="LevelStats" type="Control" parent="CanvasLayer/MarginContainer"]
+visible = false
 layout_mode = 2
 
 [node name="LevelPoints" type="Label" parent="CanvasLayer/MarginContainer/LevelStats"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+text = "Level stuff"
 
 [node name="LevelEndScreen" type="Control" parent="CanvasLayer/MarginContainer"]
+visible = false
 layout_mode = 2
 
 [node name="GridContainer" type="GridContainer" parent="CanvasLayer/MarginContainer/LevelEndScreen"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -29.0
+offset_right = 35.0
+offset_bottom = 29.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer"]
 layout_mode = 2
-text = "Test Text"
+text = "Congratulations Level Done!
+"
 
 [node name="Button" type="Button" parent="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer"]
 layout_mode = 2
@@ -53,9 +67,32 @@ text = "Ok"
 
 [node name="Main Menu" type="Control" parent="CanvasLayer/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 
-[node name="Timer" type="Timer" parent="."]
-autostart = true
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/MarginContainer/Main Menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -33.0
+offset_right = 64.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[connection signal="pressed" from="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Button" to="." method="_on_level_done_button_pressed"]
+[node name="Continue" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+layout_mode = 2
+text = "Continue Game"
+
+[node name="NewGame" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+layout_mode = 2
+text = "New Game"
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Button" to="." method="_on_level_done_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue" to="." method="_on_continue_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/NewGame" to="." method="_on_new_game_pressed"]
