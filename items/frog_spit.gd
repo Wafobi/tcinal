@@ -10,9 +10,8 @@ func _ready():
 	hide()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta):
+func _physics_process(_delta):
 	if direction and active:
-		#rotation = targetPosition.angle_to_point(position)
 		var velocity = direction * speed
 		move_and_collide(velocity)
 

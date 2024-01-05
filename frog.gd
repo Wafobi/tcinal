@@ -12,11 +12,12 @@ var active : bool = false
 
 enum Type {water = 0, acid = 16, fire = 32}
 
-@export var type : Frog.Type = Frog.Type.water
+@export var type : Frog.Type = Type.water
 
 var target : Player
 var shootTimer : Timer
 var lineOfSight :RayCast2D
+
 func _ready():
 	lineOfSight = $LineOfSight
 	target = null
@@ -27,6 +28,7 @@ func _ready():
 signal loaded
 func setup():
 	await get_tree().physics_frame
+	setType(type)
 	show()
 	loaded.emit()
 
@@ -40,20 +42,20 @@ func spit():
 	if lineOfSight.is_colliding():
 		return
 
-	var spit : FrogSpit = null
+	var spitType : FrogSpit = null
 	match type: #something prevents the atlassprite update here -.-
-		Type.water : spit = ResourceHandler.instantiate_resource("frog_spit")
-		Type.acid : spit = ResourceHandler.instantiate_resource("frog_acid")
-		Type.fire : spit = ResourceHandler.instantiate_resource("frog_fire")
+		Type.water : spitType = ResourceHandler.instantiate_resource("frog_spit")
+		Type.acid : spitType = ResourceHandler.instantiate_resource("frog_acid")
+		Type.fire : spitType = ResourceHandler.instantiate_resource("frog_fire")
 
-	if spit:
-		get_owner().add_child(spit)
-		get_owner().move_child(spit,-1)
-		spit.set_owner(get_owner())
-		spit.position = to_global(lineOfSight.position)
-		spit.setTargetPosition(to_global(lineOfSight.target_position))
+	if spitType:
+		get_owner().add_child(spitType)
+		get_owner().move_child(spitType,-1)
+		spitType.set_owner(get_owner())
+		spitType.position = to_global(lineOfSight.position)
+		spitType.setTargetPosition(to_global(lineOfSight.target_position))
 		if target:
-			spit.active = true
+			spitType.active = true
 			shootTimer.start(0.8)
 
 func updateSpitTarget(doSpit : bool = false):
@@ -69,7 +71,7 @@ func updateSpitTarget(doSpit : bool = false):
 	if doSpit:
 		shootTimer.start(0.1)
 
-func _process(delta):
+func _process(_delta):
 	if active:
 		if target:
 			if target.position.x < position.x: #left
@@ -90,6 +92,7 @@ func _physics_process(delta):
 func setType(frogType : Frog.Type):
 	type = frogType
 	var sprite :Sprite2D = $Sprite2D
+	print(frogType, self, type, sprite)
 	sprite.set_region_rect(Rect2(type, 0, 16, 16))
 	var animationPlayer : AnimationPlayer = $AnimationPlayer
 	var animation : Animation = animationPlayer.get_animation("idle")
