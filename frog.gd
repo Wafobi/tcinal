@@ -27,7 +27,6 @@ func _ready():
 signal loaded
 func setup():
 	await get_tree().physics_frame
-	active = true
 	show()
 	loaded.emit()
 
@@ -42,7 +41,7 @@ func spit():
 		return
 
 	var spit : FrogSpit = null
-	match type:
+	match type: #something prevents the atlassprite update here -.-
 		Type.water : spit = ResourceHandler.instantiate_resource("frog_spit")
 		Type.acid : spit = ResourceHandler.instantiate_resource("frog_acid")
 		Type.fire : spit = ResourceHandler.instantiate_resource("frog_fire")
@@ -53,30 +52,37 @@ func spit():
 		spit.set_owner(get_owner())
 		spit.position = to_global(lineOfSight.position)
 		spit.setTargetPosition(to_global(lineOfSight.target_position))
+		if target:
+			spit.active = true
+			shootTimer.start(0.8)
+
+func updateSpitTarget(doSpit : bool = false):
+	var target_pos = Vector2(target.position.x, target.position.y-8)			
+	var spit_position : Vector2
+	if looks_right():
+		spit_position = Vector2(5, -5)
+	if looks_left():
+		spit_position = Vector2(-5, -5)
+	lineOfSight.position = spit_position
+	lineOfSight.target_position = to_local(target_pos)
+	await  get_tree().physics_frame
+	if doSpit:
+		shootTimer.start(0.1)
 
 func _process(delta):
 	if active:
 		if target:
-			var target_pos = Vector2(target.position.x, target.position.y-8)			
-			var spit_position : Vector2
-			if looks_right():
-				spit_position = position + Vector2(5, -5)
-			if looks_left():
-				spit_position = position + Vector2(-5, -5)
+			if target.position.x < position.x: #left
+				$Sprite2D.flip_h = false
+			if target.position.x > position.x: #right
+				$Sprite2D.flip_h = true
+			updateSpitTarget()
 
-			lineOfSight.position = to_local(spit_position)
-			lineOfSight.target_position = to_local(target_pos)
-			if shootTimer.is_stopped():
-				shootTimer.start(0.8)
 
 func _physics_process(delta):
-	# Add the gravity.	
-	if target and active:
-		if target.position.x < position.x: #left
-			$Sprite2D.flip_h = false
-		if target.position.x > position.x: #right
-			$Sprite2D.flip_h = true
-	
+	if not active:
+		pass #add movement
+	# Add the gravity.
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	move_and_slide()
@@ -96,15 +102,17 @@ func setType(frogType : Frog.Type):
 	animationPlayer.play("idle")
 
 func _on_aggro_range_body_entered(body):
-	if body is Player:
+	if body is Player and active:
 		print("Targeting Player")
 		target = body
+		updateSpitTarget(true)
 
 func _on_aggro_range_body_exited(body):
 	if body is Player and active:
 		print("Not Targeting Player")
-		target = null
 		shootTimer.stop()
+		target = null
+		lineOfSight.target_position = Vector2(0,50)
 
 func _on_shoot_timer_timeout():
 	if active:

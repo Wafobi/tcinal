@@ -3,6 +3,7 @@ class_name SpawnHandler extends Node2D
 signal loaded
 signal doorSignal
 signal levelDone
+signal respawn
 
 var leaving_level = false
 var player : Player = null
@@ -27,8 +28,14 @@ var levelEntitiesLoaded : int = 0
 var levelEntities : int = 0
 func entityLoaded():
 	levelEntitiesLoaded += 1
-	if levelEntities == levelEntitiesLoaded:
+	if levelEntities == levelEntitiesLoaded: # all entities are ready to be enabled
 		loaded.emit()
+
+# serializes entitiy activity with player activity.
+# main takes care of setting this
+func activateEntities():
+	for entity in getEntities():
+		entity.active = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -62,6 +69,7 @@ var respawning = false
 func levelBoundsHit(body):
 	if body is Player and not leaving_level and not respawning:
 		respawning = true
+		respawn.emit()
 		call_deferred("respawnPlayer")
 
 func goalReched(body):
@@ -76,6 +84,7 @@ func setFeatherType(ft):
 func prepare():
 	for feather in getRainbowFeathers():
 		feather.setType(Feather.Type.rainbow)
+
 	var lb = getLevelBounds()
 	if lb:
 		lb.body_entered.connect(levelBoundsHit)

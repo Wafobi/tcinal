@@ -3,13 +3,15 @@ class_name FrogSpit extends RigidBody2D
 var direction  : Vector2 = Vector2.ZERO
 var speed :int = 2
 var damage = 1
+
+var active : bool = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	hide()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
-	if direction:
+	if direction and active:
 		#rotation = targetPosition.angle_to_point(position)
 		var velocity = direction * speed
 		move_and_collide(velocity)

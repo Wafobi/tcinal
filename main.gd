@@ -71,7 +71,9 @@ func onPlayerSetupDone():
 
 func activatePlayer():
 	if player:
+		print("Player active")
 		player.active = true
+	level.activateEntities()
 
 func _process(delta):
 	if player and player.active:
@@ -79,11 +81,9 @@ func _process(delta):
 
 func fadeIn():
 	SzeneTransition.fadeIn()
-	await SzeneTransition.done
 	
 func fadeOut():
 	SzeneTransition.fadeOut()
-	await SzeneTransition.done
 
 func szeneTransition(toSzene : String ,target="SpawnPoint"):
 	if not toSzene:
@@ -100,19 +100,22 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 		spawnPoint = target
 		level = new_level
 		level.loaded.connect(levelCreated)
-		level.levelDone.connect(levelDone)
 		add_child(level)
 	else:
-		fadeOut()
+		fadeOut() # possible bug - shouldn't activate player
 		print(toSzene, " not found")
 
 var levelFeatherCount = 0
+var levelFrogCount = 0
 func levelCreated():
 	levelTime = 0.0
 	levelPoints = 0
 	feathers = 0
 	levelFeatherCount = level.getFeathers().size()
+	levelFrogCount = level.getFrogs().size()
 	level.doorSignal.connect(szeneTransition)
+	level.levelDone.connect(levelDone)
+	level.respawn.connect(playerRespawned)
 	level.prepare()
 	for feather : Feather in level.getFeathers():
 		feather.collected.connect(featherCollected)
@@ -128,13 +131,18 @@ func levelCreated():
 			level.setupPlayer(player)
 			return
 
+var points = 0
+var levelPoints = 0
+var feathers = 0
+var frogs = 0
+
+func playerRespawned():
+	levelPoints -= 2
+
 func frogKilled():
 	levelPoints += 2
 	updateLevelLabel()
 
-var levelPoints = 0
-var points = 0
-var feathers = 0
 func featherCollected(feather : Feather):
 	feathers+=1
 	levelPoints += feather.points
@@ -146,7 +154,8 @@ func levelDone(levelName):
 	You finished the level %s.
 	Time %d seconds
 	Points Collected: %d
-	Feathers collected %d / %d""" % [levelName, int(levelTime), levelPoints, feathers, levelFeatherCount]
+	Feathers collected %d / %d
+	Frogs killed %d / %d""" % [levelName, int(levelTime), levelPoints, feathers, levelFeatherCount, frogs, levelFrogCount]
 	fadeIn()
 	points += levelPoints
 	levelStats.hide()

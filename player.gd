@@ -229,4 +229,3 @@ func _on_hitbox_body_entered(body):
 		health -= body.damage
 		print("Player hit by ", body.name, " - suffered ", body.damage, " damange. Remaining Health ", health)
 		body.destroy()
-
