@@ -88,6 +88,7 @@ func respawnPlayer():
 	else:
 		player.position = Checkpoints.levelspawn
 	levelPoints -= 2
+	respawning = false
 
 var respawning = false
 func levelBoundsHit(body):

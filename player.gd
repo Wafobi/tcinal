@@ -80,13 +80,10 @@ func _process(_delta):
 			wallDetector.target_position.x = -6
 			$AnimatedSprite2D.flip_h = true
 
-		if jumping:
-			$AnimatedSprite2D.play("jump")
+		if velocity.x != 0:
+			$AnimatedSprite2D.play("walk")
 		else:
-			if velocity.x != 0:
-				$AnimatedSprite2D.play("walk")
-			else:
-				$AnimatedSprite2D.play("idle")
+			$AnimatedSprite2D.play("idle")
 
 		if state == states.FLOOR:
 			jumping = false

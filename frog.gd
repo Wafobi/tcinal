@@ -102,17 +102,22 @@ func setType(frogType : Frog.Type):
 	animation.track_set_key_value(0, 3, Rect2(type, 48, 16, 16))
 	animation.track_set_key_value(0, 4, Rect2(type, 32, 16, 16))
 	animation.track_set_key_value(0, 5, Rect2(type, 16, 16, 16))
-	animationPlayer.play("idle")
+	
+	animation = animationPlayer.get_animation("walk")
+	animation.track_set_key_value(0, 0, Rect2(type, 64, 16, 16))
+	animation.track_set_key_value(0, 1, Rect2(type, 80, 16, 16))
+	animation.track_set_key_value(0, 2, Rect2(type, 96, 16, 16))
+	animation.track_set_key_value(0, 3, Rect2(type, 112, 16, 16))
+	
+	animationPlayer.play("walk")
 
 func _on_aggro_range_body_entered(body):
 	if body is Player and active:
-		print("Targeting Player")
 		target = body
 		updateSpitTarget(true)
 
 func _on_aggro_range_body_exited(body):
 	if body is Player and active:
-		print("Not Targeting Player")
 		shootTimer.stop()
 		target = null
 		lineOfSight.target_position = Vector2(0,50)
@@ -123,7 +128,6 @@ func _on_shoot_timer_timeout():
 
 func _on_area_2d_body_entered(body):
 	if body is Player and active:
-		print("Player killed frog")
 		hide()
 		killed.emit()
 		queue_free()
