@@ -1,5 +1,17 @@
 class_name SpawnHandler extends Node2D
 
+# ========INTERFACE TO BE IMPLEMENTED BY EXTENING CLASS ==================
+func getTileMap() -> TileMap:
+	return null
+
+func getLevelBounds() -> Area2D:
+	return null
+
+func getLevelGoal() -> Area2D:
+	return null
+
+# ========================================================================
+
 signal loaded
 signal doorSignal
 signal levelDone
@@ -19,23 +31,9 @@ var frogsKilled : int = 0
 
 var levelPoints : int = 0
 
-func getTileMap() -> TileMap:
-	return null
-
-func getLevelBounds() -> Area2D:
-	return null
-
-func getLevelGoal() -> Area2D:
-	return null
-
-func getReward() -> String:
-	return ""
-
-func requirements() -> Array:
-	return []
-
 var levelEntitiesLoaded : int = 0
 var levelEntities : int = 0
+
 func entityLoaded():
 	levelEntitiesLoaded += 1
 	if levelEntities == levelEntitiesLoaded: # all entities are ready to be enabled
@@ -97,7 +95,7 @@ func levelBoundsHit(body):
 		respawning = true
 		call_deferred("respawnPlayer")
 
-func goalReched(body):
+func goalReached(body):
 	if body is Player:
 		levelDone.emit()
 
@@ -149,7 +147,7 @@ func prepare():
 		goal.collision_mask = 0
 		goal.set_collision_layer_value(11, true)
 		goal.set_collision_mask_value(2, true)
-		goal.body_entered.connect(goalReched)
+		goal.body_entered.connect(goalReached)
 		print("Chicken set free")
 
 func getEntities() -> Array:
