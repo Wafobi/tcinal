@@ -1,13 +1,10 @@
 class_name Main extends Node2D
 
-# for menu see https://www.youtube.com/watch?v=Ueivz6JY5Fw
 # for paralex background : https://www.youtube.com/watch?v=f8z4x6R7OSM
 
 var level : SpawnHandler
 var spawnPoint :String
 var player : Player
-
-var levelTime : float
 
 var mainMenu : Control
 var levelEndScreen : Control
@@ -45,7 +42,6 @@ func _ready():
 	if ResourceHandler.saveFileExists("player"):
 		loadSavedGameButton.show()
 
-	levelTime = 0.0
 	level = null
 	spawnPoint = ""
 	player = null
@@ -75,10 +71,6 @@ func activatePlayer():
 		player.active = true
 	level.activateEntities()
 
-func _process(delta):
-	if player and player.active:
-		levelTime += delta
-
 func fadeIn():
 	SzeneTransition.fadeIn()
 	
@@ -105,23 +97,13 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 		fadeOut() # possible bug - shouldn't activate player
 		print(toSzene, " not found")
 
-var levelFeatherCount = 0
-var levelFrogCount = 0
+var points = 0
+
 func levelCreated():
-	levelTime = 0.0
-	levelPoints = 0
-	feathers = 0
-	levelFeatherCount = level.getFeathers().size()
-	levelFrogCount = level.getFrogs().size()
 	level.doorSignal.connect(szeneTransition)
 	level.levelDone.connect(levelDone)
-	level.respawn.connect(playerRespawned)
 	level.prepare()
-	for feather : Feather in level.getFeathers():
-		feather.collected.connect(featherCollected)
-	for frog : Frog in level.getFrogs():
-		frog.killed.connect(frogKilled)
-	print("W: created ", level.name, " with ", levelFeatherCount)
+	print("W: created ", level.name)
 	print("W: searching ", spawnPoint)
 	for sp in level.getSpawnPoints():
 		if sp.name == spawnPoint:
@@ -131,33 +113,11 @@ func levelCreated():
 			level.setupPlayer(player)
 			return
 
-var points = 0
-var levelPoints = 0
-var feathers = 0
-var frogs = 0
-
-func playerRespawned():
-	levelPoints -= 2
-
-func frogKilled():
-	levelPoints += 2
-	updateLevelLabel()
-
-func featherCollected(feather : Feather):
-	feathers+=1
-	levelPoints += feather.points
-	updateLevelLabel()
-
-func levelDone(levelName):
+func levelDone():
 	player.active = false
-	levelEndScreenLabel.text = """Congratulations
-	You finished the level %s.
-	Time %d seconds
-	Points Collected: %d
-	Feathers collected %d / %d
-	Frogs killed %d / %d""" % [levelName, int(levelTime), levelPoints, feathers, levelFeatherCount, frogs, levelFrogCount]
+	levelEndScreenLabel.text = level.getLevelStatistics()
 	fadeIn()
-	points += levelPoints
+	points += level.levelPoints
 	levelStats.hide()
 	levelEndScreen.show()
 	player.position.x -= 2 #TODO this is a hack ... to prevent the restored player from instantly hitting the chicken
@@ -165,7 +125,7 @@ func levelDone(levelName):
 
 func updateLevelLabel():
 	if level:
-		levelLabel.text = level.name + ": Points: " + var_to_str(levelPoints) + " Time: " + var_to_str(int(levelTime))
+		levelLabel.text = level.getCurrentStatistics()
 
 func updateHighScoreLabel():
 	highScoreLabel.text = "Points: " + var_to_str(points)

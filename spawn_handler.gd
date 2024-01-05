@@ -7,6 +7,17 @@ signal respawn
 
 var leaving_level = false
 var player : Player = null
+var playerRespawnCount : int = 0
+
+var levelTime : float = 0
+
+var levelFeatherCount : int = 0
+var feathersCollected : int = 0
+
+var levelFrogCount : int = 0
+var frogsKilled : int = 0
+
+var levelPoints : int = 0
 
 func getTileMap() -> TileMap:
 	return null
@@ -23,7 +34,6 @@ func getReward() -> String:
 func requirements() -> Array:
 	return []
 
-
 var levelEntitiesLoaded : int = 0
 var levelEntities : int = 0
 func entityLoaded():
@@ -39,7 +49,14 @@ func activateEntities():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	levelTime = 0
+	levelFeatherCount = getFeathers().size()
+	levelFrogCount = getFrogs().size()
+	levelPoints = 0
+	feathersCollected = 0
+	frogsKilled = 0
 	leaving_level = false
+	playerRespawnCount = 0
 	for door : Area2D in getDoors():
 		door.collision_layer = 0
 		door.set_collision_layer_value(5,true)
@@ -54,36 +71,67 @@ func _ready():
 		loaded.emit()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass
-	
+func _process(delta):
+	if player and player.active:
+		levelTime += delta
+
+func frogKilled():
+	levelPoints += 2
+	frogsKilled += 1
+
+func featherCollected(feather : Feather):
+	feathersCollected+=1
+	levelPoints += feather.points
+
 func respawnPlayer():
 	print("player respawning")
 	if Checkpoints.last_checkpoint:
 		player.position = Checkpoints.last_checkpoint
 	else:
 		player.position = Checkpoints.levelspawn
-	respawning = false
+	levelPoints -= 2
 
 var respawning = false
 func levelBoundsHit(body):
 	if body is Player and not leaving_level and not respawning:
 		respawning = true
-		respawn.emit()
 		call_deferred("respawnPlayer")
 
 func goalReched(body):
-	print("player hit goal")
 	if body is Player:
-		levelDone.emit(name)
+		levelDone.emit()
 
-func setFeatherType(ft):
+func getCurrentStatistics() -> String:
+	return "%s | Points: %d | Time: %d" %  [name, levelPoints, int(levelTime)] 
+
+func getLevelStatistics() -> String :
+	return """Congratulations!
+			You finished the level: %s.
+				Time:		%d seconds.
+		Points Collected: 	%d
+	  Feathers collected:	%d / %d
+			Frogs killed:	%d / %d""" % [name, int(levelTime), levelPoints, feathersCollected, levelFeatherCount, frogsKilled, levelFrogCount]
+
+func setFeatherType(ft : Feather.Type):
 	for feather in getFeathers():
 		feather.setType(ft)
 
 func prepare():
+	for feather in getFeathers():
+		feather.collected.connect(featherCollected)
+	if getFeathers().size() > 0:
+		print("Feathers fluffed up")
+
+	for frog : Frog in getFrogs():
+		frog.killed.connect(frogKilled)
+	if getFrogs().size() > 0:
+		print("Frogs ready to be killed")
+
+	#RAINBOW OVERRIDE!!!
 	for feather in getRainbowFeathers():
 		feather.setType(Feather.Type.rainbow)
+	if getRainbowFeathers().size() > 0:
+		print("Some feathers magically enhanced with rainbows")
 
 	var lb = getLevelBounds()
 	if lb:
@@ -92,7 +140,7 @@ func prepare():
 		lb.collision_mask = 0
 		lb.set_collision_layer_value(9, true)
 		lb.set_collision_mask_value(2, true)
-		print("level bounds setup")
+		print("Pit of doom placed")
 
 	var goal = getLevelGoal()
 	if goal:
@@ -102,7 +150,7 @@ func prepare():
 		goal.set_collision_layer_value(11, true)
 		goal.set_collision_mask_value(2, true)
 		goal.body_entered.connect(goalReched)
-		print("goal setup")
+		print("Chicken set free")
 
 func getEntities() -> Array:
 	return getTileMap().get_tree().get_nodes_in_group("entity")
@@ -134,12 +182,6 @@ func setupPlayer(newPlayer : Player):
 		setupBody(player)
 		player.spawn()
 
-func cleanup(defer = false):
-	queue_free()
-	if player:
-		removeBody(player,defer)
-		player = null
-
 func setupBody(body,coords : Vector2 = Vector2.ZERO):
 	getTileMap().add_child(body)
 	getTileMap().move_child(body,-1)
@@ -154,13 +196,19 @@ func removeBody(body, defer=false):
 		getTileMap().remove_child(body)
 	body.hide()
 
+func cleanup(defer = false):
+	queue_free()
+	if player:
+		removeBody(player,defer)
+		player = null
+
 func _input(_event):
 	if Input.is_action_just_pressed("use"):
 		for door in getDoors():
 			var overlaps = door.get_overlapping_bodies()
 			if overlaps.size() > 0:
 				for overlap in overlaps:
-					if overlap is Player:
+					if overlap is Player and overlap.active:
 						print("Player on ", door.name," ", name+"_SpawnPoint" )
 						leaving_level = true
 						doorSignal.emit(door.name, name+"_SpawnPoint")
