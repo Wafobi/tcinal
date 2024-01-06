@@ -4,12 +4,12 @@ signal dead
 signal setupDone
 signal checkPoint
 
+var animationPlayer : AnimationPlayer
 var coyote_timer : Timer
 var coyote_time :float = 0.16
 var can_coyote_jump : bool = false
 var jump_buffer :float = 0
 var jumping : bool = false
-
 
 @export var has_double_jump : bool = false
 @export var has_wall_slide : bool = false
@@ -52,8 +52,9 @@ func reset():
 func _ready():
 	active = false
 	health = max_health
-	coyote_timer = $"Coyote Timer"
+	coyote_timer = $CoyoteTimer
 	wallDetector = $wallDetector
+	animationPlayer = $AnimationPlayer
 	coyote_timer.one_shot = true
 	coyote_timer.timeout.connect(_on_coyote_timer_timeout)
 
@@ -236,6 +237,7 @@ func _input(_event):
 
 func _on_hitbox_body_entered(body):
 	if body is FrogSpit:
+		animationPlayer.play("hit")
 		health -= body.damage
 		print("Player hit by ", body.name, " - suffered ", body.damage, " damange. Remaining Health ", health)
 		if health == 0:

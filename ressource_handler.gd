@@ -1,7 +1,7 @@
 extends Node2D
 
 var game_settings = {
-	save_game = true,
+	save_game = false,
 	demo = true
 }
 
