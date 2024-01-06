@@ -14,7 +14,9 @@ var inMenu : bool = false
 func exitMenu():
 	if get_tree().paused:
 		hide()
+		$GridContainer/Label.text = \"Chefs's Adventure\"
 		$\"GridContainer/NewGame\".show()
+		$\"GridContainer/ExitGame\".show()
 		get_tree().paused = false
 
 func _input(_event):
@@ -23,7 +25,9 @@ func _input(_event):
 			exitMenu()
 		else:
 			get_tree().paused = true
+			$GridContainer/Label.text = \"Game paused\"
 			$\"GridContainer/NewGame\".hide()
+			$\"GridContainer/ExitGame\".hide()
 			show()
 "
 
@@ -120,6 +124,10 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+layout_mode = 2
+text = "Chefs's Adventure"
+
 [node name="Continue" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
 layout_mode = 2
 text = "Continue Game"
@@ -128,7 +136,12 @@ text = "Continue Game"
 layout_mode = 2
 text = "New Game"
 
+[node name="ExitGame" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+layout_mode = 2
+text = "Quit Game"
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Button" to="." method="_on_level_done_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/ExitGame" to="." method="_on_exit_game_pressed"]

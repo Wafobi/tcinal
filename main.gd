@@ -181,3 +181,5 @@ func _on_new_game_pressed():
 		player.reset()
 	start_gaming.emit()
 
+func _on_exit_game_pressed():
+	get_tree().quit()
