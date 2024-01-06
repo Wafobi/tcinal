@@ -115,6 +115,7 @@ func levelCreated():
 
 func levelDone():
 	player.active = false
+	player.velocity = Vector2.ZERO
 	levelEndScreenLabel.text = level.getLevelStatistics()
 	fadeIn()
 	points += level.levelPoints

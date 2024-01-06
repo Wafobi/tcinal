@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://levels/demo_room.gd" id="1_i14ie"]
 [ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/town.tscn" id="1_kehiw"]
-[ext_resource type="PackedScene" uid="uid://d4gf271g24l2d" path="res://frog.tscn" id="3_787lr"]
+[ext_resource type="PackedScene" uid="uid://d4gf271g24l2d" path="res://entities/frog.tscn" id="3_787lr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_em00j"]
 size = Vector2(16, 32)
@@ -31,7 +31,7 @@ layer_5/z_index = 2
 layer_5/tile_data = PackedInt32Array(3801139, 458752, 2, 3866675, 458752, 3, 65539, 1310720, 0, 131075, 1310720, 1, 65543, 1376256, 0, 131079, 1376256, 1, 65540, 196608, 15, 65541, 262144, 15, 65544, 196608, 16, 65545, 262144, 16, 196609, 1703936, 0, 196610, 1441792, 0, 196612, 1638400, 1, 196614, 1703936, 1, 196617, 1769472, 1)
 
 [node name="SpawnPoint" type="Marker2D" parent="TileMap" groups=["SpawnPoint"]]
-position = Vector2(59, 61)
+position = Vector2(70, 61)
 
 [node name="fields" type="Area2D" parent="TileMap" groups=["door"]]
 position = Vector2(41, 48)
@@ -68,6 +68,10 @@ position = Vector2(137, 60)
 
 [node name="frog4" parent="TileMap" instance=ExtResource("3_787lr")]
 position = Vector2(403, 192)
+
+[node name="frog5" parent="TileMap" instance=ExtResource("3_787lr")]
+position = Vector2(232, 191)
+type = 16
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_rosxe")

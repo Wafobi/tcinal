@@ -100,7 +100,7 @@ func goalReached(body):
 		levelDone.emit()
 
 func getCurrentStatistics() -> String:
-	return "%s | Points: %d | Time: %d" %  [name, levelPoints, int(levelTime)] 
+	return "Health: %d | Points: %d | Time: %d" %  [player.health, levelPoints, int(levelTime)] 
 
 func getLevelStatistics() -> String :
 	return """Congratulations!

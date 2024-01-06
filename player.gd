@@ -5,11 +5,12 @@ signal setupDone
 signal checkPoint
 
 var coyote_timer : Timer
-var coyote_time :float = 0.15
+var coyote_time :float = 0.16
 var can_coyote_jump : bool = false
 var jump_buffer :float = 0
 var jumping : bool = false
 
+#TODO - how to enabled this?
 @export var has_double_jump : bool = false
 @export var has_wall_slide : bool = false
 @export var has_wall_jump : bool = false
@@ -22,6 +23,7 @@ var state : states = states.AIR
 
 var wallDetector : RayCast2D
 
+var max_health : float = 10
 var health :float
 
 var default_speed : float = 100.0
@@ -38,7 +40,7 @@ var active : bool
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	active = false
-	health = 10
+	health = max_health
 	coyote_timer = $"Coyote Timer"
 	wallDetector = $wallDetector
 	coyote_timer.one_shot = true

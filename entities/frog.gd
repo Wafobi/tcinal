@@ -37,7 +37,13 @@ var homePosition : Vector2
 var target_position : Vector2
 var direction : Vector2 = Vector2.ZERO
 
+var animatedSprite : AnimatedSprite2D
+
+func getAnimatedSprite() -> AnimatedSprite2D :
+	return $frogAnimation
+
 func _ready():
+	hide()
 	homePosition = Vector2.ZERO
 	target_position = Vector2.ZERO
 	lineOfSight = $LineOfSight
@@ -57,7 +63,9 @@ func _ready():
 	jumpDetectorR = $TopRight
 	fallDetector = $fallOk
 	obstacleDetector = $walkWay
-
+	
+	animatedSprite = getAnimatedSprite()
+	playAnimation("idle")
 	call_deferred("setup")
 
 func setup():
@@ -72,10 +80,10 @@ func activate():
 	navi.target_position = homePosition
 
 func looks_right() -> bool :
-	return $Sprite2D.flip_h
+	return animatedSprite.flip_h
 
 func looks_left() -> bool :
-	return not $Sprite2D.flip_h
+	return not animatedSprite.flip_h
 
 func spit():
 	if lineOfSight.is_colliding():
@@ -96,7 +104,7 @@ func spit():
 		spitType.setTargetPosition(to_global(lineOfSight.target_position))
 		if target:
 			spitType.active = true
-			shootTimer.start(0.8)
+			shootTimer.start(0.5)
 	else:
 		print("Frog has no Spit")
 
@@ -204,38 +212,29 @@ func _physics_process(delta):
 func _process(_delta):
 	if active and not navi.is_navigation_finished():
 		if navi.target_position.x <= floor(position.x): #left
-			$Sprite2D.flip_h = false
+			animatedSprite.flip_h = false
 		if navi.target_position.x >= floor(position.x): #right
-			$Sprite2D.flip_h = true
+			animatedSprite.flip_h = true
 		if looks_right():
 			obstacleDetector.target_position.x = 15
 		if looks_left():
 			obstacleDetector.target_position.x = -15
 
+func playAnimation(animation : String):
+	match type:
+		Type.acid: animatedSprite.play("acid_"+animation)
+		Type.fire: animatedSprite.play("fire_"+animation)
+		Type.water: animatedSprite.play("water_"+animation)
+
 func setType(frogType : Frog.Type):
 	type = frogType
-	var sprite :Sprite2D = $Sprite2D
-
-	sprite.set_region_rect(Rect2(type, 0, 16, 16))
-	var animationPlayer : AnimationPlayer = $AnimationPlayer
-	var animation : Animation = animationPlayer.get_animation("idle")
-	animation.track_set_key_value(0, 0, Rect2(type, 0, 16, 16))
-	animation.track_set_key_value(0, 1, Rect2(type, 16, 16, 16))
-	animation.track_set_key_value(0, 2, Rect2(type, 32, 16, 16))
-	animation.track_set_key_value(0, 3, Rect2(type, 48, 16, 16))
-	animation.track_set_key_value(0, 4, Rect2(type, 32, 16, 16))
-	animation.track_set_key_value(0, 5, Rect2(type, 16, 16, 16))
-	
-	animation = animationPlayer.get_animation("walk")
-	animation.track_set_key_value(0, 0, Rect2(type, 64, 16, 16))
-	animation.track_set_key_value(0, 1, Rect2(type, 80, 16, 16))
-	animation.track_set_key_value(0, 2, Rect2(type, 96, 16, 16))
-	animation.track_set_key_value(0, 3, Rect2(type, 112, 16, 16))
 
 func _on_aggro_range_body_entered(body):
 	if body is Player and active:
 		target = body
-		get_node("AnimationPlayer").play("walk")
+		print(home)
+		if home:
+			playAnimation("walk")
 		updateSpitTarget(true)
 
 func _on_aggro_range_body_exited(body):
@@ -254,15 +253,22 @@ func _on_hitbox_body_entered(body):
 		killed.emit()
 		queue_free()
 
+var home : bool = false
 func _on_target_timer_timeout():
 	if target:
+		home = false
 		updateSpitTarget()
 		navi.target_position.x = floor(target.position.x)
 		navi.target_position.y = floor(target.position.y)
 	else:
-		if not navi.is_navigation_finished():
-			navi.target_position = homePosition
+		navi.target_position = homePosition
 
 func _on_navigation_agent_2d_velocity_computed(_safe_velocity):
 	#kills the agent :)
-	pass # Replace with function body.O
+	pass
+
+func _on_navigation_agent_2d_target_reached():
+	if navi.distance_to_target() <= navi.target_desired_distance:
+		if navi.target_position == homePosition and not home:
+			home = true
+			playAnimation("idle")

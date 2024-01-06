@@ -3,9 +3,9 @@
 [ext_resource type="Script" path="res://levels/fields.gd" id="1_br2kp"]
 [ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/town.tscn" id="1_uu5f3"]
 [ext_resource type="PackedScene" uid="uid://dukfbdifltsec" path="res://items/checkpoint.tscn" id="3_gj7oj"]
-[ext_resource type="PackedScene" uid="uid://cljd730g31gmq" path="res://chicken.tscn" id="4_3u513"]
+[ext_resource type="PackedScene" uid="uid://cljd730g31gmq" path="res://entities/chicken.tscn" id="4_3u513"]
 [ext_resource type="PackedScene" uid="uid://bws0dg1tfv3nq" path="res://items/feather.tscn" id="4_c5c6s"]
-[ext_resource type="PackedScene" uid="uid://d4gf271g24l2d" path="res://frog.tscn" id="5_k7xug"]
+[ext_resource type="PackedScene" uid="uid://d4gf271g24l2d" path="res://entities/frog.tscn" id="5_k7xug"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fh6c6"]
 size = Vector2(2712, 39)
