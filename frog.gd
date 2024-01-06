@@ -1,9 +1,11 @@
 class_name Frog extends CharacterBody2D
 
 signal killed
+signal loaded
 
-const SPIT_SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+const SPIT_SPEED = 350.0
+const WALK_SPEED = 50.0
+const JUMP_VELOCITY = -100.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -18,19 +20,56 @@ var target : Player
 var shootTimer : Timer
 var lineOfSight :RayCast2D
 
+var jumpLeftDetector : RayCast2D
+var jumpRightDetector : RayCast2D
+
+var jumpDetectorR : RayCast2D
+var jumpDetectorL : RayCast2D
+
+var groundLeft : RayCast2D
+var groundRight : RayCast2D
+var fallDetector : RayCast2D
+var obstacleDetector : RayCast2D
+
+var navi: NavigationAgent2D
+
+var homePosition : Vector2
+var target_position : Vector2
+var direction : Vector2 = Vector2.ZERO
+
 func _ready():
+	homePosition = Vector2.ZERO
+	target_position = Vector2.ZERO
 	lineOfSight = $LineOfSight
 	target = null
 	shootTimer = $shootTimer
 	shootTimer.one_shot = true
+
+	navi = $NavigationAgent2D
+
+	jumpLeftDetector = $JumpLeft
+	jumpRightDetector = $JumpRight
+
+	groundLeft = $groundLeft
+	groundRight = $groundRight
+
+	jumpDetectorL = $TopLeft
+	jumpDetectorR = $TopRight
+	fallDetector = $fallOk
+	obstacleDetector = $walkWay
+
 	call_deferred("setup")
 
-signal loaded
 func setup():
 	await get_tree().physics_frame
 	setType(type)
 	show()
 	loaded.emit()
+
+func activate():
+	active = true
+	homePosition = position
+	navi.target_position = homePosition
 
 func looks_right() -> bool :
 	return $Sprite2D.flip_h
@@ -40,6 +79,7 @@ func looks_left() -> bool :
 
 func spit():
 	if lineOfSight.is_colliding():
+		shootTimer.start(0.1)
 		return
 
 	var spitType : FrogSpit = null
@@ -57,6 +97,8 @@ func spit():
 		if target:
 			spitType.active = true
 			shootTimer.start(0.8)
+	else:
+		print("Frog has no Spit")
 
 func updateSpitTarget(doSpit : bool = false):
 	var target_pos = Vector2(target.position.x, target.position.y-8)			
@@ -71,28 +113,109 @@ func updateSpitTarget(doSpit : bool = false):
 	if doSpit:
 		shootTimer.start(0.1)
 
-func _process(_delta):
-	if active:
-		if target:
-			if target.position.x < position.x: #left
-				$Sprite2D.flip_h = false
-			if target.position.x > position.x: #right
-				$Sprite2D.flip_h = true
-			updateSpitTarget()
+func getJumpYDistance():
+	return ceil(abs(target_position.y - position.y))
 
+func getJumpXDistance():
+	return ceil(abs(target_position.x - position.x))
+
+func isFallOkay():
+	if not groundRight.is_colliding():
+		fallDetector.position = groundRight.position
+	if not groundLeft.is_colliding():
+		fallDetector.position = groundLeft.position
+	return fallDetector.is_colliding()
+
+func is_on_edge():
+	return is_on_floor_only() and (not groundLeft.is_colliding() or not groundRight.is_colliding())
+
+func isWayBlocked():
+	return obstacleDetector.is_colliding()
+
+func canJumpRight():
+	return not jumpRightDetector.is_colliding()
+
+func canJumpLeft():
+	return not jumpLeftDetector.is_colliding()
+
+func hasTopSpace():
+	return not jumpDetectorL.is_colliding() and not jumpDetectorR.is_colliding()
+
+func canJump():
+	return hasTopSpace() and ( canJumpLeft() or canJumpRight())
+
+func shouldJump():
+	var y_margin = 8
+	var x_margin = 2
+	var y_distance = getJumpYDistance()
+	var x_distance_to_jump = getJumpXDistance()
+
+	if y_distance < 30:
+		x_margin = 10
+	if y_distance >= 20:
+		x_margin = 1
+
+	var jump_distance_ok = x_distance_to_jump <= x_margin and ((floor(target_position.y) + y_margin) < floor(position.y))
+
+	return is_on_floor_only() and jump_distance_ok
+
+func shouldFall():
+	return floor(lineOfSight.target_position.y) > 0
+
+func move(_delta):
+	if not navi.is_navigation_finished():
+		target_position = navi.get_next_path_position()
+		direction = position.direction_to(target_position).normalized()
+
+		if direction.x:
+			velocity.x = direction.x * WALK_SPEED
+		else:
+			velocity.x = move_toward(velocity.x, 0, WALK_SPEED)
+
+		if is_on_edge():
+			if isFallOkay():
+				if not groundRight.is_colliding():
+					velocity.x += 30
+				if not groundLeft.is_colliding():
+					velocity.x -= 30
+			else:
+				velocity.x = 0
+		if isWayBlocked():
+			jump()
+	else:
+		velocity = Vector2.ZERO
+
+func jump():
+	if canJump():
+		var y_distance = getJumpYDistance()
+		velocity.y = -220
+		if y_distance > 20:
+			velocity.y = -340
 
 func _physics_process(delta):
 	if not active:
 		pass #add movement
+	move(delta)
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	move_and_slide()
 
+func _process(_delta):
+	if active and not navi.is_navigation_finished():
+		if navi.target_position.x <= floor(position.x): #left
+			$Sprite2D.flip_h = false
+		if navi.target_position.x >= floor(position.x): #right
+			$Sprite2D.flip_h = true
+		if looks_right():
+			obstacleDetector.target_position.x = 15
+		if looks_left():
+			obstacleDetector.target_position.x = -15
+
 func setType(frogType : Frog.Type):
 	type = frogType
 	var sprite :Sprite2D = $Sprite2D
-	print(frogType, self, type, sprite)
+
 	sprite.set_region_rect(Rect2(type, 0, 16, 16))
 	var animationPlayer : AnimationPlayer = $AnimationPlayer
 	var animation : Animation = animationPlayer.get_animation("idle")
@@ -108,12 +231,11 @@ func setType(frogType : Frog.Type):
 	animation.track_set_key_value(0, 1, Rect2(type, 80, 16, 16))
 	animation.track_set_key_value(0, 2, Rect2(type, 96, 16, 16))
 	animation.track_set_key_value(0, 3, Rect2(type, 112, 16, 16))
-	
-	animationPlayer.play("walk")
 
 func _on_aggro_range_body_entered(body):
 	if body is Player and active:
 		target = body
+		get_node("AnimationPlayer").play("walk")
 		updateSpitTarget(true)
 
 func _on_aggro_range_body_exited(body):
@@ -122,12 +244,25 @@ func _on_aggro_range_body_exited(body):
 		target = null
 		lineOfSight.target_position = Vector2(0,50)
 
-func _on_shoot_timer_timeout():
+func _on_shoot_timer_timeout():#
 	if active:
 		spit()
 
-func _on_area_2d_body_entered(body):
+func _on_hitbox_body_entered(body):
 	if body is Player and active:
 		hide()
 		killed.emit()
 		queue_free()
+
+func _on_target_timer_timeout():
+	if target:
+		updateSpitTarget()
+		navi.target_position.x = floor(target.position.x)
+		navi.target_position.y = floor(target.position.y)
+	else:
+		if not navi.is_navigation_finished():
+			navi.target_position = homePosition
+
+func _on_navigation_agent_2d_velocity_computed(_safe_velocity):
+	#kills the agent :)
+	pass # Replace with function body.O

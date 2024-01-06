@@ -94,6 +94,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_af0ti")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rriue")
 }],
 "loop": true,
 "name": &"walk",
@@ -118,7 +121,7 @@ script = ExtResource("1_vduj5")
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_1wky6")
 animation = &"walk"
-frame_progress = 0.304224
+frame_progress = 0.0389016
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -7.5)

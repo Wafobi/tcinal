@@ -43,7 +43,7 @@ func entityLoaded():
 # main takes care of setting this
 func activateEntities():
 	for entity in getEntities():
-		entity.active = true
+		entity.activate()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -82,7 +82,6 @@ func featherCollected(feather : Feather):
 	levelPoints += feather.points
 
 func respawnPlayer():
-	print("player respawning")
 	if Checkpoints.last_checkpoint:
 		player.position = Checkpoints.last_checkpoint
 	else:
@@ -105,11 +104,11 @@ func getCurrentStatistics() -> String:
 
 func getLevelStatistics() -> String :
 	return """Congratulations!
-			You finished the level: %s.
-				Time:		%d seconds.
-		Points Collected: 	%d
-	  Feathers collected:	%d / %d
-			Frogs killed:	%d / %d""" % [name, int(levelTime), levelPoints, feathersCollected, levelFeatherCount, frogsKilled, levelFrogCount]
+You finished the level: %s
+Time: %d seconds.
+Points Collected: %d.
+Feathers collected: %d / %d.
+Frogs killed: %d / %d""" % [name, int(levelTime), levelPoints, feathersCollected, levelFeatherCount, frogsKilled, levelFrogCount]
 
 func setFeatherType(ft : Feather.Type):
 	for feather in getFeathers():

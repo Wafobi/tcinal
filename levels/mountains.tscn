@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bf2spjbxednwv"]
+[gd_scene load_steps=10 format=3 uid="uid://bf2spjbxednwv"]
 
 [ext_resource type="Script" path="res://levels/mountains.gd" id="1_r2svr"]
 [ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/town.tscn" id="2_cq504"]
@@ -12,6 +12,12 @@ size = Vector2(2714, 13)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_athev"]
 size = Vector2(16, 32)
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_g3ggb"]
+vertices = PackedVector2Array(2377, -210, 2603, 52, 2606, 176, 66, 170, 69, -51, 648, -228, 1506, -482)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5, 6)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(60, -59, 645, -238, 1507, -493, 2384, -219, 2613, 48, 2617, 187, 56, 180)])
+source_geometry_group_name = &"navigation_polygon_source_group"
 
 [node name="mountains" type="Node2D"]
 script = ExtResource("1_r2svr")
@@ -209,3 +215,7 @@ position = Vector2(2383, 54)
 
 [node name="feathers34" parent="TileMap" instance=ExtResource("4_ukjwm")]
 position = Vector2(2215, -156)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+position = Vector2(1, 0)
+navigation_polygon = SubResource("NavigationPolygon_g3ggb")

@@ -25,6 +25,9 @@ func setup():
 	await get_tree().physics_frame
 	loaded.emit()
 
+func activate():
+	active = true
+
 func setType(featherType : Feather.Type):
 	type = featherType
 	var sprite :Sprite2D = $Sprite2D

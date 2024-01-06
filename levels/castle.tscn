@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://8q1orc6c4s2u"]
+[gd_scene load_steps=11 format=3 uid="uid://8q1orc6c4s2u"]
 
 [ext_resource type="Script" path="res://levels/castle.gd" id="1_4g4jk"]
 [ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/town.tscn" id="2_6opg2"]
@@ -15,6 +15,12 @@ size = Vector2(20, 351.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_osk36"]
 size = Vector2(16, 32)
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_2jo4x"]
+vertices = PackedVector2Array(2595, -200, 2594, 159, 2, 150, -3, -201)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-14, -212, 2606, -210, 2604, 170, -7, 160)])
+source_geometry_group_name = &"navigation_polygon_source_group"
 
 [node name="castle" type="Node2D"]
 script = ExtResource("1_4g4jk")
@@ -204,3 +210,6 @@ position = Vector2(2466, -158)
 
 [node name="feathers28" parent="TileMap" groups=["RainbowFeather"] instance=ExtResource("2_wbwnw")]
 position = Vector2(2415, 34)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_2jo4x")

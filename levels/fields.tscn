@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://318h37vdfi3w"]
+[gd_scene load_steps=10 format=3 uid="uid://318h37vdfi3w"]
 
 [ext_resource type="Script" path="res://levels/fields.gd" id="1_br2kp"]
 [ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/town.tscn" id="1_uu5f3"]
@@ -12,6 +12,12 @@ size = Vector2(2712, 39)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jau73"]
 size = Vector2(16, 32)
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_4qygd"]
+vertices = PackedVector2Array(2601, -192, 2582, 87, 64, 49, 57, -261)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(2592, 98, 2612, -202, 47, -272, 55, 59)])
+source_geometry_group_name = &"navigation_polygon_source_group"
 
 [node name="fields" type="Node2D"]
 script = ExtResource("1_br2kp")
@@ -57,22 +63,22 @@ position = Vector2(2426, -32)
 type = 16
 
 [node name="frog" parent="TileMap2" instance=ExtResource("5_k7xug")]
-position = Vector2(137, 33)
+position = Vector2(151, 30)
 
 [node name="frog2" parent="TileMap2" instance=ExtResource("5_k7xug")]
 position = Vector2(416, 27)
 
 [node name="frog3" parent="TileMap2" instance=ExtResource("5_k7xug")]
-position = Vector2(888, -52)
+position = Vector2(882, -47)
 
 [node name="frog4" parent="TileMap2" instance=ExtResource("5_k7xug")]
-position = Vector2(1222, 64)
+position = Vector2(1280, 48)
 
 [node name="frog5" parent="TileMap2" instance=ExtResource("5_k7xug")]
 position = Vector2(1274, -163)
 
 [node name="frog6" parent="TileMap2" instance=ExtResource("5_k7xug")]
-position = Vector2(1405, 64)
+position = Vector2(1590, 16)
 
 [node name="frog7" parent="TileMap2" instance=ExtResource("5_k7xug")]
 position = Vector2(1752, -17)
@@ -138,3 +144,6 @@ position = Vector2(1468, -73)
 
 [node name="feathers10" parent="TileMap2" groups=["RainbowFeather"] instance=ExtResource("4_c5c6s")]
 position = Vector2(1298, -69)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_4qygd")
