@@ -11,11 +11,16 @@ func getLevelGoal() -> Area2D:
 	return chicken.getHitBox()
 
 func prepare():
-	setFeatherType(Feather.Type.grey)
+	levelName = "Field"
+	setFeatherType(Feather.Type.brown)
 	var chicken : Chicken = $TileMap2/chicken
-	chicken.setType(Feather.Type.grey)
+	chicken.setType(Feather.Type.brown)
 	chicken.set_owner(getTileMap())
 	for frog in getFrogs():
 		frog.setType(Frog.Type.water)
 		frog.set_owner(getTileMap())
 	super.prepare()
+
+func getChicken() -> Chicken:
+	return $TileMap2/chicken
+

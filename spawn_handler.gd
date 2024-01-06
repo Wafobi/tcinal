@@ -10,6 +10,14 @@ func getLevelBounds() -> Area2D:
 func getLevelGoal() -> Area2D:
 	return null
 
+func cameraOn():
+	pass
+
+func cameraOff():
+	pass
+	
+func getChicken() -> Chicken:
+	return null
 # ========================================================================
 
 signal loaded
@@ -34,6 +42,11 @@ var levelPoints : int = 0
 var levelEntitiesLoaded : int = 0
 var levelEntities : int = 0
 
+var levelName = name
+
+var respawnCount = 0
+var respawning = false
+
 func entityLoaded():
 	levelEntitiesLoaded += 1
 	if levelEntities == levelEntitiesLoaded: # all entities are ready to be enabled
@@ -51,6 +64,7 @@ func deactivateEntities():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	respawnCount = 0
 	levelTime = 0
 	levelFeatherCount = getFeathers().size()
 	levelFrogCount = getFrogs().size()
@@ -85,15 +99,17 @@ func featherCollected(feather : Feather):
 	feathersCollected+=1
 	levelPoints += feather.points
 
+
 func respawnPlayer():
+	respawnCount += 1
 	if Checkpoints.last_checkpoint:
 		player.position = Checkpoints.last_checkpoint
 	else:
 		player.position = Checkpoints.levelspawn
-	levelPoints -= 2
+	if feathersCollected > 0:
+		feathersCollected -= 1
 	respawning = false
 
-var respawning = false
 func levelBoundsHit(body):
 	if body is Player and not leaving_level and not respawning:
 		respawning = true
@@ -108,15 +124,27 @@ func goalReached(body):
 func getCurrentStatistics() -> String:
 	if not player:
 		return ""
-	return "Health: %d | Points: %d | Time: %d" %  [player.health, levelPoints, int(levelTime)] 
+	return "%d | Time: %d" %  [feathersCollected, int(levelTime)]
 
 func getLevelStatistics() -> String :
 	return """Congratulations!
-You finished the level: %s
+Finished Level: %s.
+You caught %s the %s chicken.
+
+Health restored.
+
 Time: %d seconds.
-Points Collected: %d.
 Feathers collected: %d / %d.
-Frogs killed: %d / %d""" % [name, int(levelTime), levelPoints, feathersCollected, levelFeatherCount, frogsKilled, levelFrogCount]
+Feathers lost by respawn: %d
+
+Frogs killed: %d / %d
+
+Game saved""" % [levelName,
+getChicken().chickenName,
+getChicken().featherTypeName,
+int(levelTime), feathersCollected, 
+levelFeatherCount, respawnCount,
+frogsKilled, levelFrogCount]
 
 func setFeatherType(ft : Feather.Type):
 	for feather in getFeathers():

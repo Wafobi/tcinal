@@ -11,22 +11,24 @@ var can_coyote_jump : bool = false
 var jump_buffer :float = 0
 var jumping : bool = false
 
-@export var has_double_jump : bool = false
-@export var has_wall_slide : bool = false
-@export var has_wall_jump : bool = false
-@export var has_dash : bool = false
+var has_double_jump : bool = false
+var has_wall_slide : bool = false
+var has_wall_jump : bool = false
+var has_dash : bool = false
 
-var fatal_y_velocity = 410 #TODO let player take better fall damange
+var fatal_y_velocity = 420
 
 enum states {FLOOR = 1, JUMP, AIR, WALL}
 var state : states = states.AIR
 
 var wallDetector : RayCast2D
 
-@export var max_health : float = 10
-@export var health :float
-@export var points = 0
-@export var feathers = 0
+
+var healthBar : ProgressBar
+var max_health : float = 10
+var health :float
+var points = 0
+var feathers = 0
 
 var default_speed : float = 100.0
 var jump_velocity : float = -300.0
@@ -38,6 +40,9 @@ var direction : Vector2 = Vector2.ZERO
 var view_direction : Vector2 = Vector2.ZERO
 
 var active : bool
+
+func setCameraOn(on : bool = true):
+	$Camera2D.enabled = on
 
 func reset():
 	health = max_health
@@ -78,9 +83,16 @@ func checkFallDamage():
 		fall_velocity = velocity.y
 	if fall_velocity > 0 and velocity.y == 0:
 		if fall_velocity >= fatal_y_velocity:
-			print("player died from hitting the ground to hard ", fall_velocity)
-			health=0
-			dead.emit()
+			animationPlayer.play("hit")
+			if (fall_velocity-fatal_y_velocity >= 4):
+				health -= 2
+			elif (fall_velocity-fatal_y_velocity >= 35):
+				health -= 3
+			elif (fall_velocity-fatal_y_velocity >= 70):
+				health -= 5
+			elif (fall_velocity-fatal_y_velocity >= 100):
+				health = 0
+				dead.emit()
 		fall_velocity = 0
 
 func _process(_delta):
@@ -89,6 +101,7 @@ func _process(_delta):
 	else:
 		$AnimatedSprite2D.play("idle")
 	if active:
+		healthBar.value = health
 		if direction:
 			view_direction = direction
 
@@ -228,6 +241,8 @@ func spawn():
 	velocity = Vector2.ZERO
 	fall_velocity = 0
 	$AnimatedSprite2D.modulate = Color(1,1,1,1)
+	healthBar.max_value = max_health
+	healthBar.value = health
 	call_deferred("setup")
 
 func setup():
@@ -242,7 +257,6 @@ func _on_hitbox_body_entered(body):
 	if body is FrogSpit:
 		animationPlayer.play("hit")
 		health -= body.damage
-		print("Player hit by ", body.name, " - suffered ", body.damage, " damange. Remaining Health ", health)
-		if health == 0:
-			dead.emit()
 		body.destroy()
+		if health <= 0:
+			dead.emit()

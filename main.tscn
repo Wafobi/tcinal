@@ -1,7 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://bhkwdri1lpplk"]
+[gd_scene load_steps=10 format=3 uid="uid://bhkwdri1lpplk"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_gbal1"]
 [ext_resource type="PackedScene" uid="uid://cha83ev2hvxm5" path="res://transition.tscn" id="2_jgo5c"]
+[ext_resource type="Theme" uid="uid://cwfm24wycg4k3" path="res://healthbar.tres" id="3_6kl40"]
+[ext_resource type="Texture2D" uid="uid://brfjfshyh8tmc" path="res://assets/feathers.png" id="4_5gs7d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vg1cw"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+shadow_color = Color(0, 0, 0, 0.768627)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6fje3"]
+bg_color = Color(1, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8, 0.8, 0.8, 0)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwgv4"]
+atlas = ExtResource("4_5gs7d")
+region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b8w3m"]
 bg_color = Color(0, 0, 0, 0.603922)
@@ -24,11 +47,12 @@ func _input(_event):
 		if get_tree().paused:
 			exitMenu()
 		else:
-			get_tree().paused = true
 			$GridContainer/Label.text = \"Game paused\"
+			$\"GridContainer/Continue\".show()
 			$\"GridContainer/NewGame\".hide()
-			$\"GridContainer/ExitGame\".hide()
+			$\"GridContainer/ExitGame\".show()
 			show()
+			get_tree().paused = true
 "
 
 [node name="main" type="Node2D"]
@@ -54,24 +78,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Highscore" type="Control" parent="CanvasLayer/MarginContainer"]
-visible = false
-layout_mode = 2
-
-[node name="HighScorePoints" type="Label" parent="CanvasLayer/MarginContainer/Highscore"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-text = "Highscore"
-
 [node name="LevelStats" type="Control" parent="CanvasLayer/MarginContainer"]
-visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer/LevelStats"]
+layout_mode = 2
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 121.0
+offset_bottom = 104.0
+
+[node name="healthBar" type="ProgressBar" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme = ExtResource("3_6kl40")
+theme_override_colors/font_color = Color(0, 0, 0, 0)
+theme_override_styles/background = SubResource("StyleBoxFlat_vg1cw")
+theme_override_styles/fill = SubResource("StyleBoxFlat_6fje3")
+max_value = 10.0
+value = 5.0
+
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer"]
 layout_mode = 2
 
-[node name="LevelPoints" type="Label" parent="CanvasLayer/MarginContainer/LevelStats"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer"]
+layout_mode = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer/HBoxContainer"]
+position = Vector2(-10, 11)
+scale = Vector2(1.3, 1.3)
+texture = SubResource("AtlasTexture_cwgv4")
+
+[node name="LevelLabel" type="Label" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer/HBoxContainer"]
+layout_mode = 2
 text = "Level stuff"
 
 [node name="LevelEndScreen" type="Control" parent="CanvasLayer/MarginContainer"]

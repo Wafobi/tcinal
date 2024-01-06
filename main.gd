@@ -9,10 +9,8 @@ var player : Player
 var mainMenu : Control
 var levelEndScreen : Control
 
-var highScore : Control
 var levelStats : Control
 
-var highScoreLabel : Label
 var levelLabel : Label
 
 var levelEndScreenLabel : Label
@@ -22,32 +20,31 @@ var loadSavedGameButton : Button
 var transitionAnimation : SzeneTransitioner
 var currentMenu : Control
 
+var healthBar : ProgressBar
+
 func savePlayer():
-	ResourceHandler.saveNode(player)
+	ResourceHandler.savePlayerValues(player)
 
 signal start_gaming
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	mainMenu = $"CanvasLayer/MarginContainer/Main Menu"
-	highScore = $CanvasLayer/MarginContainer/Highscore
 	levelStats = $CanvasLayer/MarginContainer/LevelStats
 	levelEndScreen = $CanvasLayer/MarginContainer/LevelEndScreen
-	
-	highScoreLabel = $CanvasLayer/MarginContainer/Highscore/HighScorePoints
-	levelLabel = $CanvasLayer/MarginContainer/LevelStats/LevelPoints
+	healthBar = $CanvasLayer/MarginContainer/LevelStats/VBoxContainer/healthBar
+	levelLabel = $CanvasLayer/MarginContainer/LevelStats/VBoxContainer/HBoxContainer/LevelLabel
 	levelEndScreenLabel = $CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Label
 	
 	transitionAnimation = $CanvasLayer/Transition
 	
 	levelEndScreen.hide()
 	levelStats.hide()
-	highScore.hide()
 	mainMenu.hide()
 	currentMenu = null
 	loadSavedGameButton = $"CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue"
 	loadSavedGameButton.hide()
-	if ResourceHandler.saveFileExists("player"):
+	if ResourceHandler.saveFileExists():
 		loadSavedGameButton.show()
 
 	level = null
@@ -56,13 +53,21 @@ func _ready():
 	startGame()
 
 func loadPlayer():
-	player = ResourceHandler.loadIfSaveFileExists("player")
+	player = ResourceHandler.instantiate_resource("player")
+	player.healthBar = healthBar
 	player.dead.connect(onPlayerDeath)
 	player.setupDone.connect(onPlayerSetupDone)
 
 func onPlayerSetupDone():
 	print("Player ready in ", level.name)
 	level.activateEntities()
+	if not ResourceHandler.game_settings.testing:
+		match level.name:
+			"demo_room" :
+				player.setCameraOn(false)
+				level.cameraOn()
+			_ :
+				player.setCameraOn()
 
 	transitionAnimation.revealLevel()
 	await transitionAnimation.revealDone
@@ -72,15 +77,8 @@ func onPlayerSetupDone():
 		currentMenu.hide()
 		mainMenu.inMenu = false
 
-	match level.name:
-		"demo_room" :
-			updateHighScoreLabel()
-			levelStats.hide()
-			highScore.show()
-		_ :
-			updateLevelLabel()
-			highScore.hide()
-			levelStats.show()
+	updateLevelLabel()
+	levelStats.show()
 	if player:
 		player.active = true
 
@@ -88,6 +86,7 @@ func szeneTransition(toSzene : String ,target : String ="SpawnPoint"):
 	if not toSzene:
 		return
 	if player and player.active:
+		levelStats.hide()
 		player.active = false
 		transitionAnimation.hideLevel()
 		await transitionAnimation.hideDone
@@ -111,8 +110,8 @@ func levelCreated():
 	level.doorSignal.connect(szeneTransition)
 	level.levelDone.connect(levelDone)
 	level.prepare()
-	print("W: created ", level.name)
-	print("W: searching ", spawnPoint)
+	print("created ", level.name)
+	print("searching ", spawnPoint)
 	for sp in level.getSpawnPoints():
 		if sp.name == spawnPoint:
 			Checkpoints.levelspawn = sp.position
@@ -128,7 +127,7 @@ func levelDone():
 	player.points += level.levelPoints
 	player.feathers += level.feathersCollected
 	levelStats.hide()
-	player.position.x -= 2 #TODO this is a hack ... to prevent the restored player from instantly hitting the chicken
+	player.health = player.max_health
 	savePlayer()
 	mainMenu.inMenu = true
 	currentMenu = levelEndScreen
@@ -138,9 +137,6 @@ func updateLevelLabel():
 	if level:
 		levelLabel.text = level.getCurrentStatistics()
 
-func updateHighScoreLabel():
-	highScoreLabel.text = "Health: %.0f | Points: %d | Feathers: %d" % [player.health, player.points, player.feathers]
-
 func _on_timer_timeout():
 	updateLevelLabel()
 
@@ -149,11 +145,17 @@ func onPlayerDeath():
 	player.velocity = Vector2.ZERO
 	player.active = false
 	levelEndScreenLabel.text = """You died!"""
-	if player.points > 0:
-		levelEndScreenLabel.text = """You died
-		and lost 10 Points"""
+	if player.feathers >= 5:
+		levelEndScreenLabel.text = """You died!
+		
+		2 feathers lost.
+		
+		Health restored."""
+		player.points -= 20
+		player.feathers -= 2
 	mainMenu.inMenu = true
 	currentMenu = levelEndScreen
+	player.health = player.max_health
 	call_deferred("loadMainRoom", level.name+"_SpawnPoint")
 
 func loadMainRoom(target : String ="SpawnPoint"):
@@ -173,6 +175,7 @@ func _on_continue_pressed():
 	if get_tree().paused:
 		mainMenu.exitMenu()
 	else:
+		ResourceHandler.loadPlayerValues(player)
 		start_gaming.emit()
 
 func _on_new_game_pressed():

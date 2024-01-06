@@ -8,13 +8,9 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 @export var type : Feather.Type = Feather.Type.brown
 
+var chickenName : String = "CripsyChicken"
+var featherTypeName : String = "fluffy"
 var active : bool = false
-
-var reward = {
-	Feather.Type.brown : "double_jump",
-	Feather.Type.grey : "wall_slide",
-	Feather.Type.white : "wall_jump",
-}
 
 signal loaded
 
@@ -32,7 +28,22 @@ func deactivate():
 	active = false
 
 func setType(featherType : Feather.Type):
+
 	type = featherType
+	match type:
+		Feather.Type.brown:
+			chickenName = "Frank"
+			featherTypeName = "brown feathered"
+		Feather.Type.grey :
+			chickenName = "Billy"
+			featherTypeName = "grey feathered"
+		Feather.Type.white :
+			chickenName = "Dusty"
+			featherTypeName = "white feathered"
+		Feather.Type.rainbow :
+			chickenName = "Saul"
+			featherTypeName = "rainbow feathered"
+
 	var sprite :Sprite2D = $Sprite2D
 	sprite.set_region_rect(Rect2(type, 0, 16, 16))
 	var animationPlayer : AnimationPlayer = $AnimationPlayer

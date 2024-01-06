@@ -7,16 +7,19 @@ func getLevelBounds() -> Area2D:
 	return $TileMap/LevelBounds
 
 func getLevelGoal() -> Area2D:
-	var chicken : Chicken = $TileMap/chicken
+	var chicken : Chicken = getChicken()
 	return chicken.getHitBox()
 
 func prepare():
-	setFeatherType(Feather.Type.brown)
-	var chicken : Chicken = $TileMap/chicken
-	chicken.setType(Feather.Type.brown)
+	levelName = "Hill"
+	setFeatherType(Feather.Type.white)
+	var chicken : Chicken = getChicken()
+	chicken.setType(Feather.Type.white)
 	chicken.set_owner(getTileMap())
 	for frog in getFrogs():
 		frog.setType(Frog.Type.acid)
 		frog.set_owner(getTileMap())
-
 	super.prepare()
+
+func getChicken() -> Chicken:
+	return $TileMap/chicken
