@@ -25,10 +25,10 @@ var currentMenu : Control
 func savePlayer():
 	ResourceHandler.saveNode(player)
 
-var inMenu = false
 signal start_gaming
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	mainMenu = $"CanvasLayer/MarginContainer/Main Menu"
 	highScore = $CanvasLayer/MarginContainer/Highscore
 	levelStats = $CanvasLayer/MarginContainer/LevelStats
@@ -62,35 +62,35 @@ func loadPlayer():
 
 func onPlayerSetupDone():
 	print("Player ready in ", level.name)
+	level.activateEntities()
+
+	transitionAnimation.revealLevel()
+	await transitionAnimation.revealDone
+	if mainMenu.inMenu:
+		currentMenu.show()
+		await start_gaming
+		currentMenu.hide()
+		mainMenu.inMenu = false
+
 	match level.name:
 		"demo_room" :
 			updateHighScoreLabel()
 			levelStats.hide()
 			highScore.show()
 		_ :
+			updateLevelLabel()
 			highScore.hide()
 			levelStats.show()
-			updateLevelLabel()
-	level.activateEntities()
-	transitionAnimation.revealLevel()
-	await transitionAnimation.revealDone
-	if inMenu:
-		currentMenu.show()
-		await start_gaming
-		currentMenu.hide()
-		inMenu = false
-		
 	if player:
 		player.active = true
 
-func szeneTransition(toSzene : String ,target="SpawnPoint"):
+func szeneTransition(toSzene : String ,target : String ="SpawnPoint"):
 	if not toSzene:
 		return
-	if player: #leaving level through door
-		if player.active:
-			player.active = false
-			transitionAnimation.hideLevel()
-			await transitionAnimation.hideDone
+	if player and player.active:
+		player.active = false
+		transitionAnimation.hideLevel()
+		await transitionAnimation.hideDone
 	var new_level = ResourceHandler.instantiate_resource(toSzene)
 	if new_level:
 		if level:
@@ -106,8 +106,6 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 	else:
 		print(toSzene, " not found")
 		player.active = true
-
-var points = 0
 
 func levelCreated():
 	level.doorSignal.connect(szeneTransition)
@@ -127,20 +125,21 @@ func levelDone():
 	player.active = false
 	player.velocity = Vector2.ZERO
 	levelEndScreenLabel.text = level.getLevelStatistics()
-	points += level.levelPoints
+	player.points += level.levelPoints
+	player.feathers += level.feathersCollected
 	levelStats.hide()
 	player.position.x -= 2 #TODO this is a hack ... to prevent the restored player from instantly hitting the chicken
 	savePlayer()
-	inMenu = true
+	mainMenu.inMenu = true
 	currentMenu = levelEndScreen
-	call_deferred("szeneTransition","demo_room", level.name+"_SpawnPoint")
+	call_deferred("loadMainRoom", level.name+"_SpawnPoint")
 
 func updateLevelLabel():
 	if level:
 		levelLabel.text = level.getCurrentStatistics()
 
 func updateHighScoreLabel():
-	highScoreLabel.text = "Points: " + var_to_str(points)
+	highScoreLabel.text = "Health: %.0f | Points: %d | Feathers: %d" % [player.health, player.points, player.feathers]
 
 func _on_timer_timeout():
 	updateLevelLabel()
@@ -149,18 +148,21 @@ func onPlayerDeath():
 	levelStats.hide()
 	player.velocity = Vector2.ZERO
 	player.active = false
-	levelEndScreenLabel.text = """You died!
-	Lost 10 Points from this run"""
-	inMenu = true
+	levelEndScreenLabel.text = """You died!"""
+	if player.points > 0:
+		levelEndScreenLabel.text = """You died
+		and lost 10 Points"""
+	mainMenu.inMenu = true
 	currentMenu = levelEndScreen
-	call_deferred("szeneTransition","demo_room", level.name+"_SpawnPoint")
+	call_deferred("loadMainRoom", level.name+"_SpawnPoint")
 
-func loadMainRoom():
-	szeneTransition("demo_room")
+func loadMainRoom(target : String ="SpawnPoint"):
+	if ResourceHandler.game_settings.demo:
+		szeneTransition("demo_room", target)
 
 func startGame():
 	currentMenu = mainMenu
-	inMenu = true
+	mainMenu.inMenu = true
 	loadPlayer()
 	loadMainRoom()
 
@@ -168,8 +170,14 @@ func _on_level_done_button_pressed():
 	start_gaming.emit()
 
 func _on_continue_pressed():
-	start_gaming.emit()
+	if get_tree().paused:
+		mainMenu.exitMenu()
+	else:
+		start_gaming.emit()
 
 func _on_new_game_pressed():
 	ResourceHandler.prune()
+	if player:
+		player.reset()
 	start_gaming.emit()
+

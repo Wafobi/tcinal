@@ -59,7 +59,7 @@ position = Vector2(0, -9)
 shape = SubResource("RectangleShape2D_jau73")
 
 [node name="chicken" parent="TileMap2" instance=ExtResource("4_3u513")]
-position = Vector2(60, 43)
+position = Vector2(2413, -34)
 type = 16
 
 [node name="frog" parent="TileMap2" instance=ExtResource("5_k7xug")]

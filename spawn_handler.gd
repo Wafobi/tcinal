@@ -44,6 +44,10 @@ func entityLoaded():
 func activateEntities():
 	for entity in getEntities():
 		entity.activate()
+		
+func deactivateEntities():
+	for entity in getEntities():
+		entity.deactivate()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -213,6 +217,8 @@ func _input(_event):
 					if overlap is Player and overlap.active:
 						print("Player on ", door.name," ", name+"_SpawnPoint" )
 						leaving_level = true
+						overlap.velocity = Vector2.ZERO
+						deactivateEntities()
 						doorSignal.emit(door.name, name+"_SpawnPoint")
 						return
 

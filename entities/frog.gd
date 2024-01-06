@@ -79,6 +79,9 @@ func activate():
 	homePosition = position
 	navi.target_position = homePosition
 
+func deactivate():
+	active = false
+
 func looks_right() -> bool :
 	return animatedSprite.flip_h
 
@@ -233,7 +236,7 @@ func setType(frogType : Frog.Type):
 	type = frogType
 
 func _on_aggro_range_body_entered(body):
-	if body is Player:
+	if body is Player and body.active and active:
 		target = body
 		updateSpitTarget(true)
 

@@ -28,6 +28,9 @@ func setup():
 func activate():
 	active = true
 
+func deactivate():
+	active = false
+
 func setType(featherType : Feather.Type):
 	type = featherType
 	var sprite :Sprite2D = $Sprite2D

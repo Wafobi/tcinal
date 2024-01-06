@@ -10,11 +10,11 @@ var can_coyote_jump : bool = false
 var jump_buffer :float = 0
 var jumping : bool = false
 
-#TODO - how to enabled this?
+
 @export var has_double_jump : bool = false
 @export var has_wall_slide : bool = false
 @export var has_wall_jump : bool = false
-var has_dash : bool = false
+@export var has_dash : bool = false
 
 var fatal_y_velocity = 410 #TODO let player take better fall damange
 
@@ -23,8 +23,10 @@ var state : states = states.AIR
 
 var wallDetector : RayCast2D
 
-var max_health : float = 10
-var health :float
+@export var max_health : float = 10
+@export var health :float
+@export var points = 0
+@export var feathers = 0
 
 var default_speed : float = 100.0
 var jump_velocity : float = -300.0
@@ -36,6 +38,15 @@ var direction : Vector2 = Vector2.ZERO
 var view_direction : Vector2 = Vector2.ZERO
 
 var active : bool
+
+func reset():
+	health = max_health
+	points = 0
+	feathers = 0
+	has_dash = false
+	has_double_jump = false
+	has_wall_jump = false
+	has_wall_slide = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

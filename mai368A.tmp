@@ -9,18 +9,10 @@ bg_color = Color(0, 0, 0, 0.603922)
 [sub_resource type="GDScript" id="GDScript_ohhn4"]
 script/source = "extends Control
 
-var inMenu : bool = false
-
-func exitMenu():
-	if get_tree().paused:
-		hide()
-		$\"GridContainer/NewGame\".show()
-		get_tree().paused = false
-
 func _input(_event):
-	if Input.is_action_just_pressed(\"openMenu\") and not inMenu:
+	if Input.is_action_just_pressed(\"openMenu\"):
 		if get_tree().paused:
-			exitMenu()
+			$GridContainer/Continue.button_down.emit
 		else:
 			get_tree().paused = true
 			$\"GridContainer/NewGame\".hide()
