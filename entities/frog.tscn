@@ -1,7 +1,8 @@
-[gd_scene load_steps=31 format=3 uid="uid://d4gf271g24l2d"]
+[gd_scene load_steps=32 format=3 uid="uid://d4gf271g24l2d"]
 
 [ext_resource type="Texture2D" uid="uid://batbe7a5n84q0" path="res://assets/froggy.png" id="1_osq5x"]
 [ext_resource type="Script" path="res://entities/frog.gd" id="1_tkj1u"]
+[ext_resource type="PackedScene" uid="uid://dlkk3uma7k4ph" path="res://items/frog_spit.tscn" id="3_6h3ih"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_twjlw"]
 size = Vector2(13, 11)
@@ -314,6 +315,8 @@ scale = Vector2(0.999999, 0.999999)
 target_position = Vector2(20, 0)
 hit_from_inside = true
 collide_with_areas = true
+
+[node name="frog_spit" parent="." instance=ExtResource("3_6h3ih")]
 
 [connection signal="body_entered" from="aggroRange" to="." method="_on_aggro_range_body_entered"]
 [connection signal="body_exited" from="aggroRange" to="." method="_on_aggro_range_body_exited"]

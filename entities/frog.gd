@@ -201,16 +201,15 @@ func jump():
 			velocity.y = -340
 
 func _physics_process(delta):
-	if not active:
-		pass #add movement
-	move(delta)
+	if active:
+		move(delta)
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y += gravity * delta
 	move_and_slide()
 
 func _process(_delta):
-	if active and not navi.is_navigation_finished():
+	if not navi.is_navigation_finished():
 		if navi.target_position.x <= floor(position.x): #left
 			animatedSprite.flip_h = false
 		if navi.target_position.x >= floor(position.x): #right
@@ -230,10 +229,10 @@ func setType(frogType : Frog.Type):
 	type = frogType
 
 func _on_aggro_range_body_entered(body):
-	if body is Player and active:
+	if body is Player:
 		target = body
 		print(home)
-		if home:
+		if home and active:
 			playAnimation("walk")
 		updateSpitTarget(true)
 

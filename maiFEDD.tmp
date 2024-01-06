@@ -1,10 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bhkwdri1lpplk"]
+[gd_scene load_steps=3 format=3 uid="uid://bhkwdri1lpplk"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_gbal1"]
 [ext_resource type="PackedScene" uid="uid://cha83ev2hvxm5" path="res://transition.tscn" id="2_jgo5c"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b8w3m"]
-bg_color = Color(0, 0, 0, 0.603922)
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_gbal1")
@@ -50,6 +47,7 @@ offset_bottom = 23.0
 text = "Level stuff"
 
 [node name="LevelEndScreen" type="Control" parent="CanvasLayer/MarginContainer"]
+visible = false
 layout_mode = 2
 
 [node name="GridContainer" type="GridContainer" parent="CanvasLayer/MarginContainer/LevelEndScreen"]
@@ -68,7 +66,6 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer"]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_b8w3m")
 text = "Congratulations Level Done!
 "
 
@@ -78,7 +75,6 @@ size_flags_vertical = 4
 text = "Ok"
 
 [node name="Main Menu" type="Control" parent="CanvasLayer/MarginContainer"]
-visible = false
 layout_mode = 2
 mouse_filter = 2
 

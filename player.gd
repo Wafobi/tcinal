@@ -67,10 +67,15 @@ func checkFallDamage():
 	if fall_velocity > 0 and velocity.y == 0:
 		if fall_velocity >= fatal_y_velocity:
 			print("player died from hitting the ground to hard ", fall_velocity)
-			#dead.emit()
+			health=0
+			dead.emit()
 		fall_velocity = 0
 
 func _process(_delta):
+	if active and state == states.FLOOR and velocity.x != 0:
+		$AnimatedSprite2D.play("walk")
+	else:
+		$AnimatedSprite2D.play("idle")
 	if active:
 		if direction:
 			view_direction = direction
@@ -81,11 +86,6 @@ func _process(_delta):
 		elif looks_left():
 			wallDetector.target_position.x = -6
 			$AnimatedSprite2D.flip_h = true
-
-		if velocity.x != 0:
-			$AnimatedSprite2D.play("walk")
-		else:
-			$AnimatedSprite2D.play("idle")
 
 		if state == states.FLOOR:
 			jumping = false
@@ -227,4 +227,6 @@ func _on_hitbox_body_entered(body):
 	if body is FrogSpit:
 		health -= body.damage
 		print("Player hit by ", body.name, " - suffered ", body.damage, " damange. Remaining Health ", health)
+		if health == 0:
+			dead.emit()
 		body.destroy()

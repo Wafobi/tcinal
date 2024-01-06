@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://dgojck27mkdf8"]
+[gd_scene load_steps=6 format=3 uid="uid://baq2ica7e7ww2"]
 
 [ext_resource type="Script" path="res://items/frog_fire.gd" id="1_4gqqc"]
 [ext_resource type="Texture2D" uid="uid://c3gvn83wjfty2" path="res://assets/spit.png" id="2_m8j4j"]
@@ -8,12 +8,12 @@ atlas = ExtResource("2_m8j4j")
 region = Rect2(16, 0, 8, 8)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bhqlg"]
-radius = 3.0
-height = 8.0
+radius = 1.0
+height = 4.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8pnsb"]
-radius = 4.0
-height = 8.0
+radius = 2.0
+height = 6.0
 
 [node name="frog_fire" type="RigidBody2D"]
 collision_layer = 128
@@ -34,7 +34,7 @@ collision_layer = 128
 collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
-position = Vector2(-1, 0)
+rotation = 1.5708
 shape = SubResource("CapsuleShape2D_8pnsb")
 
 [connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]

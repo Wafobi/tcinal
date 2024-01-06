@@ -94,12 +94,16 @@ func levelBoundsHit(body):
 	if body is Player and not leaving_level and not respawning:
 		respawning = true
 		call_deferred("respawnPlayer")
+	if body is Frog:
+		removeBody(body, true)
 
 func goalReached(body):
 	if body is Player:
 		levelDone.emit()
 
 func getCurrentStatistics() -> String:
+	if not player:
+		return ""
 	return "Health: %d | Points: %d | Time: %d" %  [player.health, levelPoints, int(levelTime)] 
 
 func getLevelStatistics() -> String :

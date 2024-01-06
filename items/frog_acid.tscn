@@ -8,12 +8,12 @@ atlas = ExtResource("1_15dat")
 region = Rect2(8, 0, 8, 8)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xquax"]
-radius = 3.0
-height = 8.0
+radius = 1.0
+height = 4.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fi05g"]
-radius = 4.0
-height = 8.0
+radius = 2.0
+height = 6.0
 
 [node name="frog_acid" type="RigidBody2D"]
 collision_layer = 128
@@ -34,7 +34,7 @@ collision_layer = 128
 collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
-position = Vector2(-1, 0)
+rotation = 1.5708
 shape = SubResource("CapsuleShape2D_fi05g")
 
 [connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]

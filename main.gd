@@ -19,9 +19,14 @@ var levelEndScreenLabel : Label
 
 var loadSavedGameButton : Button
 
+var transitionAnimation : SzeneTransitioner
+var currentMenu : Control
+
 func savePlayer():
 	ResourceHandler.saveNode(player)
 
+var inMenu = false
+signal start_gaming
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	mainMenu = $"CanvasLayer/MarginContainer/Main Menu"
@@ -32,11 +37,14 @@ func _ready():
 	highScoreLabel = $CanvasLayer/MarginContainer/Highscore/HighScorePoints
 	levelLabel = $CanvasLayer/MarginContainer/LevelStats/LevelPoints
 	levelEndScreenLabel = $CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Label
+	
+	transitionAnimation = $CanvasLayer/Transition
+	
 	levelEndScreen.hide()
 	levelStats.hide()
 	highScore.hide()
-	mainMenu.show()
-
+	mainMenu.hide()
+	currentMenu = null
 	loadSavedGameButton = $"CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue"
 	loadSavedGameButton.hide()
 	if ResourceHandler.saveFileExists("player"):
@@ -45,7 +53,7 @@ func _ready():
 	level = null
 	spawnPoint = ""
 	player = null
-	SzeneTransition.done.connect(activatePlayer)
+	startGame()
 
 func loadPlayer():
 	player = ResourceHandler.loadIfSaveFileExists("player")
@@ -63,24 +71,26 @@ func onPlayerSetupDone():
 			highScore.hide()
 			levelStats.show()
 			updateLevelLabel()
-	fadeOut()
-
-func activatePlayer():
-	if player:
-		print("Player active")
-		player.active = true
 	level.activateEntities()
-
-func fadeIn():
-	SzeneTransition.fadeIn()
-	
-func fadeOut():
-	SzeneTransition.fadeOut()
+	transitionAnimation.revealLevel()
+	await transitionAnimation.revealDone
+	if inMenu:
+		currentMenu.show()
+		await start_gaming
+		currentMenu.hide()
+		inMenu = false
+		
+	if player:
+		player.active = true
 
 func szeneTransition(toSzene : String ,target="SpawnPoint"):
 	if not toSzene:
 		return
-	fadeIn()
+	if player: #leaving level through door
+		if player.active:
+			player.active = false
+			transitionAnimation.hideLevel()
+			await transitionAnimation.hideDone
 	var new_level = ResourceHandler.instantiate_resource(toSzene)
 	if new_level:
 		if level:
@@ -94,8 +104,8 @@ func szeneTransition(toSzene : String ,target="SpawnPoint"):
 		level.loaded.connect(levelCreated)
 		add_child(level)
 	else:
-		fadeOut() # possible bug - shouldn't activate player
 		print(toSzene, " not found")
+		player.active = true
 
 var points = 0
 
@@ -117,12 +127,13 @@ func levelDone():
 	player.active = false
 	player.velocity = Vector2.ZERO
 	levelEndScreenLabel.text = level.getLevelStatistics()
-	fadeIn()
 	points += level.levelPoints
 	levelStats.hide()
-	levelEndScreen.show()
 	player.position.x -= 2 #TODO this is a hack ... to prevent the restored player from instantly hitting the chicken
 	savePlayer()
+	inMenu = true
+	currentMenu = levelEndScreen
+	call_deferred("szeneTransition","demo_room", level.name+"_SpawnPoint")
 
 func updateLevelLabel():
 	if level:
@@ -134,24 +145,31 @@ func updateHighScoreLabel():
 func _on_timer_timeout():
 	updateLevelLabel()
 
+func onPlayerDeath():
+	levelStats.hide()
+	player.velocity = Vector2.ZERO
+	player.active = false
+	levelEndScreenLabel.text = """You died!
+	Lost 10 Points from this run"""
+	inMenu = true
+	currentMenu = levelEndScreen
+	call_deferred("szeneTransition","demo_room", level.name+"_SpawnPoint")
+
 func loadMainRoom():
 	szeneTransition("demo_room")
 
-func onPlayerDeath():
-	loadMainRoom()
-
 func startGame():
-	mainMenu.hide()
+	currentMenu = mainMenu
+	inMenu = true
 	loadPlayer()
 	loadMainRoom()
 
 func _on_level_done_button_pressed():
-	call_deferred("loadMainRoom")
-	levelEndScreen.hide()
+	start_gaming.emit()
 
 func _on_continue_pressed():
-	call_deferred("startGame")
+	start_gaming.emit()
 
 func _on_new_game_pressed():
 	ResourceHandler.prune()
-	call_deferred("startGame")
+	start_gaming.emit()

@@ -19,7 +19,6 @@ config/icon="res://assets/icon.png"
 [autoload]
 
 ResourceHandler="*res://ressource_handler.tscn"
-SzeneTransition="*res://szene_transition.tscn"
 Checkpoints="*res://checkpoints.gd"
 
 [display]
