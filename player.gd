@@ -95,9 +95,11 @@ func _process(_delta):
 		if looks_right():
 			wallDetector.target_position.x = 6
 			$AnimatedSprite2D.flip_h = false
+			animationPlayer.get_animation("hit").track_set_key_value(1,1, Vector2(-1,0))
 		elif looks_left():
 			wallDetector.target_position.x = -6
 			$AnimatedSprite2D.flip_h = true
+			animationPlayer.get_animation("hit").track_set_key_value(1,1, Vector2(1,0))
 
 		if state == states.FLOOR:
 			jumping = false
@@ -225,6 +227,7 @@ func spawn():
 	gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 	velocity = Vector2.ZERO
 	fall_velocity = 0
+	$AnimatedSprite2D.modulate = Color(1,1,1,1)
 	call_deferred("setup")
 
 func setup():
