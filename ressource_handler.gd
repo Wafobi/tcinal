@@ -32,16 +32,26 @@ func getReward(player : Player) -> String:
 
 	if chicken_coop[var_to_str(Feather.Type.rainbow)] == 1 : 
 			player.has_double_jump = true
-			return """<Double Jump>".
-			
-			When jumping press %s to jump again.
-			""" % ["space"]
+			return """Double Jump:
+			When jumping press space to jump again.
+			"""
 	if chicken_coop[var_to_str(Feather.Type.rainbow)] == 2 : 
 			player.has_wall_slide = true
-			return "<Wall Slide>"
+			return """Wall Slide:
+			This allows you to slide down vertical walls.
+				
+			When falling nagivate towards the wall to hold on to it.
+			Try the run button when wallsliding."""
 	if chicken_coop[var_to_str(Feather.Type.rainbow)] == 3 : 
 			player.has_wall_jump = true
-			return "<Wall Jump>"
+			return """Wall Jump:
+			This allows you to jump or down narrow wall passages.
+				
+			Press space after jumping on a wall or when wall sliding.
+
+			You don't need to change directions manually!
+			Try the run buttons when wall jumping
+			"""
 	return "nothing"
 
 func loadGameSettings():

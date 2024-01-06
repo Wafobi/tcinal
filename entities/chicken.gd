@@ -41,7 +41,7 @@ func setType(featherType : Feather.Type = type):
 			chickenName = "Dusty"
 			featherTypeName = "white feathered"
 		Feather.Type.rainbow :
-			chickenName = "Saul"
+			chickenName = "Slash"
 			featherTypeName = "rainbow feathered"
 
 	var sprite :Sprite2D = $Sprite2D
