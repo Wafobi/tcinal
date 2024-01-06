@@ -15,6 +15,7 @@ var active : bool = false
 signal loaded
 
 func _ready():
+	setType()
 	call_deferred("setup")
 
 func setup():
@@ -27,8 +28,7 @@ func activate():
 func deactivate():
 	active = false
 
-func setType(featherType : Feather.Type):
-
+func setType(featherType : Feather.Type = type):
 	type = featherType
 	match type:
 		Feather.Type.brown:
@@ -62,3 +62,6 @@ func _physics_process(delta):
 
 func getHitBox() -> Area2D :
 	return $Area2D
+
+func setCollisions(on : bool):
+	get_node("Area2D/CollisionShape2D").disabled = on   # enable

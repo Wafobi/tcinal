@@ -53,6 +53,7 @@ _data = {
 
 [node name="chicken" type="CharacterBody2D" groups=["entity"]]
 z_index = 1
+collision_layer = 8
 script = ExtResource("1_ycsa4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

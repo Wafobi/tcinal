@@ -34,6 +34,9 @@ var levelTime : float = 0
 var levelFeatherCount : int = 0
 var feathersCollected : int = 0
 
+var rainbowfeathersCollected : int = 0
+var levelRainbowFeatherCount : int = 0
+
 var levelFrogCount : int = 0
 var frogsKilled : int = 0
 
@@ -67,6 +70,7 @@ func _ready():
 	respawnCount = 0
 	levelTime = 0
 	levelFeatherCount = getFeathers().size()
+	levelRainbowFeatherCount = getRainbowFeathers().size()
 	levelFrogCount = getFrogs().size()
 	levelPoints = 0
 	feathersCollected = 0
@@ -98,7 +102,8 @@ func frogKilled():
 func featherCollected(feather : Feather):
 	feathersCollected+=1
 	levelPoints += feather.points
-
+	if feather.type == Feather.Type.rainbow:
+		rainbowfeathersCollected += 1
 
 func respawnPlayer():
 	respawnCount += 1
@@ -127,6 +132,11 @@ func getCurrentStatistics() -> String:
 	return "%d | Time: %d" %  [feathersCollected, int(levelTime)]
 
 func getLevelStatistics() -> String :
+	var rainbowChickenString : String = ""
+	if ResourceHandler.isChikckenCoopFull():
+		rainbowChickenString = """
+		You hear a chicken approaching
+"""
 	return """Congratulations!
 Finished Level: %s.
 You caught %s the %s chicken.
@@ -135,16 +145,19 @@ Health restored.
 
 Time: %d seconds.
 Feathers collected: %d / %d.
+Rainbow Feathers collected %d / %d.
 Feathers lost by respawn: %d
 
 Frogs killed: %d / %d
-
+%s
 Game saved""" % [levelName,
 getChicken().chickenName,
 getChicken().featherTypeName,
-int(levelTime), feathersCollected, 
-levelFeatherCount, respawnCount,
-frogsKilled, levelFrogCount]
+int(levelTime),
+feathersCollected, levelFeatherCount,
+rainbowfeathersCollected, levelRainbowFeatherCount,
+respawnCount,
+frogsKilled, levelFrogCount, rainbowChickenString]
 
 func setFeatherType(ft : Feather.Type):
 	for feather in getFeathers():

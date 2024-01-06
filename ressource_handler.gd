@@ -6,6 +6,44 @@ var game_settings = {
 	testing = false
 }
 
+var chicken_coop = {
+	var_to_str(Feather.Type.brown) : true,
+	var_to_str(Feather.Type.grey) : true,
+	var_to_str(Feather.Type.white) : true,
+	var_to_str(Feather.Type.rainbow) : 0,
+}
+
+func addChicken(type : Feather.Type):
+	if type == Feather.Type.rainbow:
+		print("Rainbow Added")
+		chicken_coop[var_to_str(type)] += 1
+	else:
+		chicken_coop[var_to_str(type)] = true
+
+func freeChickens():
+	chicken_coop[var_to_str(Feather.Type.brown)] = false
+	chicken_coop[var_to_str(Feather.Type.grey)] = false
+	chicken_coop[var_to_str(Feather.Type.white)] = false
+
+func isChikckenCoopFull() -> bool:
+	return chicken_coop[var_to_str(Feather.Type.brown)] and chicken_coop[var_to_str(Feather.Type.grey)] and chicken_coop[var_to_str(Feather.Type.white)] 
+
+func getReward(player : Player) -> String:
+
+	if chicken_coop[var_to_str(Feather.Type.rainbow)] == 1 : 
+			player.has_double_jump = true
+			return """<Double Jump>".
+			
+			When jumping press %s to jump again.
+			""" % ["space"]
+	if chicken_coop[var_to_str(Feather.Type.rainbow)] == 2 : 
+			player.has_wall_slide = true
+			return "<Wall Slide>"
+	if chicken_coop[var_to_str(Feather.Type.rainbow)] == 3 : 
+			player.has_wall_jump = true
+			return "<Wall Jump>"
+	return "nothing"
+
 func loadGameSettings():
 	if not DirAccess.dir_exists_absolute(saveFolder):
 		return
@@ -86,7 +124,7 @@ func saveNode(node : Node):
 func savePlayerValues(player : Player):
 	if not DirAccess.dir_exists_absolute(saveFolder):
 		DirAccess.make_dir_absolute(saveFolder)
-	var playerData = {
+	var saveData = {
 		"player" : {
 		"health" : player.health,
 		"points" : player.points,
@@ -95,27 +133,45 @@ func savePlayerValues(player : Player):
 		"has_wall_slide" : player.has_wall_slide,
 		"has_wall_jump" : player.has_wall_jump,
 		"has_dash" : player.has_dash,
+		},
+		"chicken_coop" : {
+			var_to_str(Feather.Type.grey) : chicken_coop[var_to_str(Feather.Type.grey)],
+			var_to_str(Feather.Type.brown) : chicken_coop[var_to_str(Feather.Type.brown)],
+			var_to_str(Feather.Type.white) : chicken_coop[var_to_str(Feather.Type.white)],
+			var_to_str(Feather.Type.rainbow) : chicken_coop[var_to_str(Feather.Type.rainbow)]
 		}
 	}
 	var file = FileAccess.open(playerSaveFile, FileAccess.WRITE)
-	file.store_string(JSON.stringify(playerData))
+	file.store_string(JSON.stringify(saveData))
 
 func loadPlayerValues(player : Player):
 	if not DirAccess.dir_exists_absolute(saveFolder):
 		return
 	var file = FileAccess.open(playerSaveFile, FileAccess.READ)
-	var savedPlayer = JSON.parse_string(file.get_as_text())
-	player.health = savedPlayer["player"]["health"]
-	player.points = savedPlayer["player"]["points"]
-	player.feathers = savedPlayer["player"]["feathers"]
-	player.has_double_jump = bool(savedPlayer["player"]["has_double_jump"])
-	player.has_wall_slide = bool(savedPlayer["player"]["has_wall_slide"])
-	player.has_wall_jump = bool(savedPlayer["player"]["has_wall_jump"])
-	player.has_dash = bool(savedPlayer["player"]["has_wall_slide"])
+	var savedData = JSON.parse_string(file.get_as_text())
+	player.health = savedData["player"]["health"]
+	player.points = savedData["player"]["points"]
+	player.feathers = savedData["player"]["feathers"]
+	player.has_double_jump = bool(savedData["player"]["has_double_jump"])
+	player.has_wall_slide = bool(savedData["player"]["has_wall_slide"])
+	player.has_wall_jump = bool(savedData["player"]["has_wall_jump"])
+	player.has_dash = bool(savedData["player"]["has_wall_slide"])
+
+func loadChickenCoop():
+	if not DirAccess.dir_exists_absolute(saveFolder):
+		return
+	var file = FileAccess.open(playerSaveFile, FileAccess.READ)
+	var savedData = JSON.parse_string(file.get_as_text())
+	var chicken_coop_ = savedData["chicken_coop"]
+
+	chicken_coop[var_to_str(Feather.Type.grey)] = chicken_coop_[var_to_str(Feather.Type.grey)]
+	chicken_coop[var_to_str(Feather.Type.brown)] = chicken_coop_[var_to_str(Feather.Type.brown)]
+	chicken_coop[var_to_str(Feather.Type.white)] = chicken_coop_[var_to_str(Feather.Type.white)]
+	chicken_coop[var_to_str(Feather.Type.rainbow)] = chicken_coop_[var_to_str(Feather.Type.rainbow)]
 
 func saveFileExists():
 	return FileAccess.file_exists(playerSaveFile)
-	
+
 func prune():
 	if DirAccess.dir_exists_absolute(saveFolder):
 		OS.move_to_trash(ProjectSettings.globalize_path(saveFolder))

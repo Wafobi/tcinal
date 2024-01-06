@@ -146,6 +146,7 @@ texture = ExtResource("1_xdagu")
 27:0/0/physics_layer_0/angular_velocity = 0.0
 27:0/0/physics_layer_1/linear_velocity = Vector2(0, 0)
 27:0/0/physics_layer_1/angular_velocity = 0.0
+0:1/next_alternative_id = 2
 0:1/0 = 0
 0:1/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:1/0/physics_layer_0/angular_velocity = 0.0

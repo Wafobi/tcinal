@@ -22,12 +22,14 @@ var currentMenu : Control
 
 var healthBar : ProgressBar
 
-func savePlayer():
+func saveGame():
 	ResourceHandler.savePlayerValues(player)
 
 signal start_gaming
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	for input in InputMap.action_get_events("jump"):
+		print(input.as_text())
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	mainMenu = $"CanvasLayer/MarginContainer/Main Menu"
 	levelStats = $CanvasLayer/MarginContainer/LevelStats
@@ -121,17 +123,27 @@ func levelCreated():
 			return
 
 func levelDone():
+	ResourceHandler.addChicken(level.getChicken().type)
+	levelEndScreenLabel.text = level.getLevelStatistics()
 	player.active = false
 	player.velocity = Vector2.ZERO
-	levelEndScreenLabel.text = level.getLevelStatistics()
-	player.points += level.levelPoints
-	player.feathers += level.feathersCollected
-	levelStats.hide()
-	player.health = player.max_health
-	savePlayer()
-	mainMenu.inMenu = true
 	currentMenu = levelEndScreen
-	call_deferred("loadMainRoom", level.name+"_SpawnPoint")
+	mainMenu.inMenu = true
+	if level.name == "demo_room":
+		currentMenu.show()
+		ResourceHandler.freeChickens()
+		await start_gaming
+		currentMenu.hide()
+		player.active = true
+		mainMenu.inMenu = false
+		saveGame()
+	else:
+		player.points += level.levelPoints
+		player.feathers += level.feathersCollected
+		levelStats.hide()
+		player.health = player.max_health
+		saveGame()
+		call_deferred("loadMainRoom")
 
 func updateLevelLabel():
 	if level:
@@ -159,6 +171,7 @@ func onPlayerDeath():
 	call_deferred("loadMainRoom", level.name+"_SpawnPoint")
 
 func loadMainRoom(target : String ="SpawnPoint"):
+	ResourceHandler.loadChickenCoop()
 	if ResourceHandler.game_settings.demo:
 		szeneTransition("demo_room", target)
 
@@ -175,6 +188,7 @@ func _on_continue_pressed():
 	if get_tree().paused:
 		mainMenu.exitMenu()
 	else:
+		print("restoring state")
 		ResourceHandler.loadPlayerValues(player)
 		start_gaming.emit()
 
