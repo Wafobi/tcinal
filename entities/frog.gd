@@ -218,6 +218,10 @@ func _process(_delta):
 			obstacleDetector.target_position.x = 15
 		if looks_left():
 			obstacleDetector.target_position.x = -15
+	if velocity.x != 0:
+		playAnimation("walk")
+	else:
+		playAnimation("idle")
 
 func playAnimation(animation : String):
 	match type:
@@ -231,9 +235,6 @@ func setType(frogType : Frog.Type):
 func _on_aggro_range_body_entered(body):
 	if body is Player:
 		target = body
-		print(home)
-		if home and active:
-			playAnimation("walk")
 		updateSpitTarget(true)
 
 func _on_aggro_range_body_exited(body):
@@ -252,10 +253,8 @@ func _on_hitbox_body_entered(body):
 		killed.emit()
 		queue_free()
 
-var home : bool = false
 func _on_target_timer_timeout():
 	if target:
-		home = false
 		updateSpitTarget()
 		navi.target_position.x = floor(target.position.x)
 		navi.target_position.y = floor(target.position.y)
@@ -267,7 +266,4 @@ func _on_navigation_agent_2d_velocity_computed(_safe_velocity):
 	pass
 
 func _on_navigation_agent_2d_target_reached():
-	if navi.distance_to_target() <= navi.target_desired_distance:
-		if navi.target_position == homePosition and not home:
-			home = true
-			playAnimation("idle")
+	pass
