@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b7kycwhnk5bat"
-path="res://.godot/imported/icon2.tga-077760ca3d8e687ddc367427e153d73f.ctex"
+uid="uid://cy5i7hmj40eng"
+path="res://.godot/imported/bombmob.png-16d44f2e9a318ef99bd8e1cab2966c08.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/icon2.tga"
-dest_files=["res://.godot/imported/icon2.tga-077760ca3d8e687ddc367427e153d73f.ctex"]
+source_file="res://assets/gfx/bombmob.png"
+dest_files=["res://.godot/imported/bombmob.png-16d44f2e9a318ef99bd8e1cab2966c08.ctex"]
 
 [params]
 

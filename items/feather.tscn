@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bws0dg1tfv3nq"]
 
 [ext_resource type="Script" path="res://items/feather.gd" id="1_m0tsi"]
-[ext_resource type="Texture2D" uid="uid://brfjfshyh8tmc" path="res://assets/feathers.png" id="2_8i47n"]
+[ext_resource type="Texture2D" uid="uid://brfjfshyh8tmc" path="res://assets/gfx/feathers.png" id="2_8i47n"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8vwwj"]
 radius = 4.24264

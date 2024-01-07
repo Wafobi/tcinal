@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfkt3u7wtb2ve"
-path="res://.godot/imported/tileset.png-c50288acd069fa293d7940a084811264.ctex"
+uid="uid://cydbngybj0him"
+path="res://.godot/imported/checkpoints_off.png-481eccba39b478bef02ebc774c81c7a5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tileset.png"
-dest_files=["res://.godot/imported/tileset.png-c50288acd069fa293d7940a084811264.ctex"]
+source_file="res://assets/gfx/checkpoints_off.png"
+dest_files=["res://.godot/imported/checkpoints_off.png-481eccba39b478bef02ebc774c81c7a5.ctex"]
 
 [params]
 

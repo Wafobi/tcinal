@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://delh7rarhkqtg"
-path="res://.godot/imported/chicknpants_jump.png-6a66699bd8f3d7e1b1f7854d6ea40776.ctex"
+path="res://.godot/imported/chicknpants_jump.png-d0f93ef253a7f86d22d85ecd6cde7bb2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/chicknpants_jump.png"
-dest_files=["res://.godot/imported/chicknpants_jump.png-6a66699bd8f3d7e1b1f7854d6ea40776.ctex"]
+source_file="res://assets/gfx/chicknpants_jump.png"
+dest_files=["res://.godot/imported/chicknpants_jump.png-d0f93ef253a7f86d22d85ecd6cde7bb2.ctex"]
 
 [params]
 

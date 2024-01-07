@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://bhkwdri1lpplk"]
+[gd_scene load_steps=11 format=3 uid="uid://bhkwdri1lpplk"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_gbal1"]
 [ext_resource type="PackedScene" uid="uid://cha83ev2hvxm5" path="res://transition.tscn" id="2_jgo5c"]
 [ext_resource type="Theme" uid="uid://cwfm24wycg4k3" path="res://healthbar.tres" id="3_6kl40"]
-[ext_resource type="Texture2D" uid="uid://brfjfshyh8tmc" path="res://assets/feathers.png" id="4_5gs7d"]
+[ext_resource type="Texture2D" uid="uid://brfjfshyh8tmc" path="res://assets/gfx/feathers.png" id="4_5gs7d"]
+[ext_resource type="AudioStream" uid="uid://dnm225nphpmr3" path="res://assets/sfx/soundtrack.ogg" id="5_foidk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vg1cw"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -168,6 +169,23 @@ mouse_filter = 2
 layout_mode = 2
 text = "Chefs's Adventure"
 
+[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Music"
+
+[node name="MusicButton" type="CheckButton" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2"]
+layout_mode = 2
+flat = true
+
+[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+layout_mode = 2
+
 [node name="Continue" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
 layout_mode = 2
 text = "Continue Game"
@@ -180,8 +198,15 @@ text = "New Game"
 layout_mode = 2
 text = "Quit Game"
 
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+process_mode = 3
+stream = ExtResource("5_foidk")
+volume_db = -20.0
+autoplay = true
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Button" to="." method="_on_level_done_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2/MusicButton" to="." method="_on_check_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/NewGame" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/ExitGame" to="." method="_on_exit_game_pressed"]

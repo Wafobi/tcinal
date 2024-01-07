@@ -1,7 +1,8 @@
-[gd_scene load_steps=31 format=3 uid="uid://d4gf271g24l2d"]
+[gd_scene load_steps=32 format=3 uid="uid://d4gf271g24l2d"]
 
-[ext_resource type="Texture2D" uid="uid://batbe7a5n84q0" path="res://assets/froggy.png" id="1_osq5x"]
+[ext_resource type="Texture2D" uid="uid://batbe7a5n84q0" path="res://assets/gfx/froggy.png" id="1_osq5x"]
 [ext_resource type="Script" path="res://entities/frog.gd" id="1_tkj1u"]
+[ext_resource type="AudioStream" uid="uid://bl4trecnrfof7" path="res://assets/sfx/frog_spit_sound.ogg" id="3_r27wr"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_twjlw"]
 size = Vector2(13, 11)
@@ -225,7 +226,6 @@ shape = SubResource("RectangleShape2D_twjlw")
 
 [node name="frogAnimation" type="AnimatedSprite2D" parent="."]
 position = Vector2(-1.25, -7.5)
-scale = Vector2(1, 1)
 sprite_frames = SubResource("SpriteFrames_je7iu")
 animation = &"water_walk"
 
@@ -265,7 +265,6 @@ path_max_distance = 200.0
 avoidance_enabled = true
 neighbor_distance = 4.0
 max_speed = 80.0
-debug_enabled = true
 
 [node name="JumpRight" type="RayCast2D" parent="."]
 position = Vector2(6, -35)
@@ -314,6 +313,9 @@ scale = Vector2(0.999999, 0.999999)
 target_position = Vector2(20, 0)
 hit_from_inside = true
 collide_with_areas = true
+
+[node name="spitSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_r27wr")
 
 [connection signal="body_entered" from="aggroRange" to="." method="_on_aggro_range_body_entered"]
 [connection signal="body_exited" from="aggroRange" to="." method="_on_aggro_range_body_exited"]

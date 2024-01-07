@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3gvn83wjfty2"
-path="res://.godot/imported/spit.png-7de13642dfc169b8ddd4985863f1b266.ctex"
+uid="uid://xiticgl33lw6"
+path="res://.godot/imported/checkpoints_on.png-4f32260d44a8839877bf491bee9d3148.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/spit.png"
-dest_files=["res://.godot/imported/spit.png-7de13642dfc169b8ddd4985863f1b266.ctex"]
+source_file="res://assets/gfx/checkpoints_on.png"
+dest_files=["res://.godot/imported/checkpoints_on.png-4f32260d44a8839877bf491bee9d3148.ctex"]
 
 [params]
 

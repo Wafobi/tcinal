@@ -1,5 +1,7 @@
 class_name Player extends CharacterBody2D
 
+#TODO https://www.youtube.com/watch?v=rQ6ijsXz3Vo - better cam handing
+
 signal dead
 signal setupDone
 signal checkPoint

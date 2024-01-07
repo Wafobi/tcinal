@@ -9,12 +9,6 @@ func getLevelBounds() -> Area2D:
 
 func getLevelGoal() -> Area2D:
 	return null
-
-func cameraOn():
-	pass
-
-func cameraOff():
-	pass
 	
 func getChicken() -> Chicken:
 	return null
@@ -64,6 +58,15 @@ func activateEntities():
 func deactivateEntities():
 	for entity in getEntities():
 		entity.deactivate()
+
+func cameraOn():
+	pass
+
+func cameraOff():
+	pass
+
+func getCamera() -> Camera2D:
+	return $Camera2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -227,6 +230,7 @@ func setupPlayer(newPlayer : Player):
 	if newPlayer:
 		player = newPlayer
 		setupBody(player)
+		#player.hookCamera(getCamera().get_path())
 		player.spawn()
 
 func setupBody(body,coords : Vector2 = Vector2.ZERO):

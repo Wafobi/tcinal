@@ -48,7 +48,8 @@ func _ready():
 	loadSavedGameButton.hide()
 	if ResourceHandler.saveFileExists():
 		loadSavedGameButton.show()
-
+	var musicButton : CheckButton = $"CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2/MusicButton"
+	musicButton.button_pressed = true
 	level = null
 	spawnPoint = ""
 	player = null
@@ -64,12 +65,12 @@ func onPlayerSetupDone():
 	print("Player ready in ", level.name)
 	level.activateEntities()
 	if not ResourceHandler.game_settings.testing:
-		match level.name:
-			"demo_room" :
-				player.setCameraOn(false)
-				level.cameraOn()
-			_ :
-				player.setCameraOn()
+			match level.name:
+					"demo_room" :
+							player.setCameraOn(false)
+							level.cameraOn()
+					_ :
+							player.setCameraOn()
 
 	transitionAnimation.revealLevel()
 	await transitionAnimation.revealDone
@@ -188,11 +189,13 @@ func _on_continue_pressed():
 	if get_tree().paused:
 		mainMenu.exitMenu()
 	else:
+		ResourceHandler.game_settings.tutorial_active = false
 		print("restoring state")
 		ResourceHandler.loadPlayerValues(player)
 		start_gaming.emit()
 
 func _on_new_game_pressed():
+	ResourceHandler.game_settings.tutorial_active = true
 	ResourceHandler.prune()
 	if player:
 		player.reset()
@@ -200,3 +203,11 @@ func _on_new_game_pressed():
 
 func _on_exit_game_pressed():
 	get_tree().quit()
+
+
+func _on_check_button_toggled(toggled_on):
+	print("Music Button", toggled_on)
+	if toggled_on:
+		$AudioStreamPlayer2D.play()
+	else:
+		$AudioStreamPlayer2D.stop()

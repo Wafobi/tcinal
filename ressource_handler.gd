@@ -3,13 +3,14 @@ extends Node2D
 var game_settings = {
 	binary_save_game = false,
 	demo = true,
-	testing = false
+	testing = false,
+	tutorial_active = true
 }
 
 var chicken_coop = {
-	var_to_str(Feather.Type.brown) : true,
-	var_to_str(Feather.Type.grey) : true,
-	var_to_str(Feather.Type.white) : true,
+	var_to_str(Feather.Type.brown) : false,
+	var_to_str(Feather.Type.grey) : false,
+	var_to_str(Feather.Type.white) : false,
 	var_to_str(Feather.Type.rainbow) : 0,
 }
 

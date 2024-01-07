@@ -38,6 +38,7 @@ var target_position : Vector2
 var direction : Vector2 = Vector2.ZERO
 
 var animatedSprite : AnimatedSprite2D
+var spitSound : AudioStreamPlayer2D
 
 func getAnimatedSprite() -> AnimatedSprite2D :
 	return $frogAnimation
@@ -65,6 +66,8 @@ func _ready():
 	obstacleDetector = $walkWay
 	
 	animatedSprite = getAnimatedSprite()
+	spitSound = $spitSound
+
 	playAnimation("idle")
 	call_deferred("setup")
 
@@ -107,7 +110,10 @@ func spit():
 		spitType.setTargetPosition(to_global(lineOfSight.target_position))
 		if target:
 			spitType.active = true
-			shootTimer.start(0.5)
+			shootTimer.start(0.8)
+			var pitch = [0.9,1.0,1.1].pick_random()
+			spitSound.pitch_scale = pitch
+			spitSound.play()
 	else:
 		print("Frog has no Spit")
 

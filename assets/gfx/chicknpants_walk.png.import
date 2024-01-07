@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://batbe7a5n84q0"
-path="res://.godot/imported/froggy.png-4ae45eb1f7368d0a99ae935f470008af.ctex"
+uid="uid://b3i55jm0o3ar4"
+path="res://.godot/imported/chicknpants_walk.png-b5851ea4c2c072c57bb70337521852e8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/froggy.png"
-dest_files=["res://.godot/imported/froggy.png-4ae45eb1f7368d0a99ae935f470008af.ctex"]
+source_file="res://assets/gfx/chicknpants_walk.png"
+dest_files=["res://.godot/imported/chicknpants_walk.png-b5851ea4c2c072c57bb70337521852e8.ctex"]
 
 [params]
 
