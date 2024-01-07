@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgi1cvt0xldq4"]
+
+[ext_resource type="Script" path="res://UI/MainMenu.gd" id="1_88bgh"]
+
+[node name="MainMenu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_88bgh")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = -33.0
+offset_right = 64.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Chefs Adventure"
+
+[node name="HSeparator" type="HSeparator" parent="GridContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="GridContainer"]
+process_mode = 3
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="GridContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Music"
+
+[node name="MusicButton" type="CheckButton" parent="GridContainer/HBoxContainer2"]
+process_mode = 3
+layout_mode = 2
+flat = true
+
+[node name="HSeparator2" type="HSeparator" parent="GridContainer"]
+layout_mode = 2
+
+[node name="Continue" type="Button" parent="GridContainer"]
+process_mode = 3
+layout_mode = 2
+text = "Continue Game"
+
+[node name="NewGame" type="Button" parent="GridContainer"]
+process_mode = 3
+layout_mode = 2
+text = "New Game"
+
+[node name="ExitGame" type="Button" parent="GridContainer"]
+process_mode = 3
+layout_mode = 2
+text = "Quit Game"
+
+[connection signal="toggled" from="GridContainer/HBoxContainer2/MusicButton" to="." method="_on_music_button_toggled"]
+[connection signal="pressed" from="GridContainer/Continue" to="." method="_on_continue_pressed"]
+[connection signal="pressed" from="GridContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="GridContainer/ExitGame" to="." method="_on_exit_game_pressed"]

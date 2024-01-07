@@ -6,50 +6,42 @@ var level : SpawnHandler
 var spawnPoint :String
 var player : Player
 
-var mainMenu : Control
-var levelEndScreen : Control
+var mainMenu : MainMenu
+var tutorialMenu : TutorialMenu
+var levelEndScreen : LevelEndScreen
+var levelStats : LevelStats
 
-var levelStats : Control
-
-var levelLabel : Label
-
-var levelEndScreenLabel : Label
-
-var loadSavedGameButton : Button
 
 var transitionAnimation : SzeneTransitioner
-var currentMenu : Control
 
 var healthBar : ProgressBar
 
 func saveGame():
 	ResourceHandler.savePlayerValues(player)
 
-signal start_gaming
+signal continueGaming
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	for input in InputMap.action_get_events("jump"):
-		print(input.as_text())
-	process_mode = Node.PROCESS_MODE_PAUSABLE
-	mainMenu = $"CanvasLayer/MarginContainer/Main Menu"
+	mainMenu = $"CanvasLayer/MarginContainer/MainMenu"
+	tutorialMenu = $CanvasLayer/MarginContainer/TutorialMenu
 	levelStats = $CanvasLayer/MarginContainer/LevelStats
 	levelEndScreen = $CanvasLayer/MarginContainer/LevelEndScreen
-	healthBar = $CanvasLayer/MarginContainer/LevelStats/VBoxContainer/healthBar
-	levelLabel = $CanvasLayer/MarginContainer/LevelStats/VBoxContainer/HBoxContainer/LevelLabel
-	levelEndScreenLabel = $CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Label
+
+	mainMenu.hide()
+	mainMenu.new_game.connect(newGame)
+	mainMenu.continue_game.connect(continueGame)
+	mainMenu.exit_game.connect(exitGame)
+	mainMenu.toggleMusic.connect(toggleMusic)
 	
+	tutorialMenu.hide()
+	levelEndScreen.hide()
+	levelEndScreen.continuePressed.connect(continueGame)
+	levelStats.hide()
+
+	healthBar = levelStats.getHealthBar()
+
 	transitionAnimation = $CanvasLayer/Transition
 	
-	levelEndScreen.hide()
-	levelStats.hide()
-	mainMenu.hide()
-	currentMenu = null
-	loadSavedGameButton = $"CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue"
-	loadSavedGameButton.hide()
-	if ResourceHandler.saveFileExists():
-		loadSavedGameButton.show()
-	var musicButton : CheckButton = $"CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2/MusicButton"
-	musicButton.button_pressed = true
 	level = null
 	spawnPoint = ""
 	player = null
@@ -75,10 +67,11 @@ func onPlayerSetupDone():
 	transitionAnimation.revealLevel()
 	await transitionAnimation.revealDone
 	if mainMenu.inMenu:
-		currentMenu.show()
-		await start_gaming
-		currentMenu.hide()
-		mainMenu.inMenu = false
+		await continueGaming
+		if ResourceHandler.game_settings.tutorial_active:
+			mainMenu.inMenu = true
+			tutorialMenu.show()
+			await tutorialMenu.tutorial_done
 
 	updateLevelLabel()
 	levelStats.show()
@@ -118,25 +111,23 @@ func levelCreated():
 	for sp in level.getSpawnPoints():
 		if sp.name == spawnPoint:
 			Checkpoints.levelspawn = sp.position
-			player.position = sp.position
-			print("Player going to spawn in ", level.name, " at ", sp.name, " ", var_to_str(sp.position))
-			level.setupPlayer(player)
+			if player:
+				player.position = sp.position
+				print("Player going to spawn in ", level.name, " at ", sp.name, " ", var_to_str(sp.position))
+				level.setupPlayer(player)
 			return
 
 func levelDone():
 	ResourceHandler.addChicken(level.getChicken().type)
-	levelEndScreenLabel.text = level.getLevelStatistics()
+	levelEndScreen.getLabel().text = level.getLevelStatistics()
 	player.active = false
 	player.velocity = Vector2.ZERO
-	currentMenu = levelEndScreen
-	mainMenu.inMenu = true
 	if level.name == "demo_room":
-		currentMenu.show()
+		mainMenu.inMenu = true
+		levelEndScreen.show()
 		ResourceHandler.freeChickens()
-		await start_gaming
-		currentMenu.hide()
+		await continueGaming
 		player.active = true
-		mainMenu.inMenu = false
 		saveGame()
 	else:
 		player.points += level.levelPoints
@@ -148,7 +139,7 @@ func levelDone():
 
 func updateLevelLabel():
 	if level:
-		levelLabel.text = level.getCurrentStatistics()
+		levelStats.getLabel().text = level.getCurrentStatistics()
 
 func _on_timer_timeout():
 	updateLevelLabel()
@@ -157,18 +148,18 @@ func onPlayerDeath():
 	levelStats.hide()
 	player.velocity = Vector2.ZERO
 	player.active = false
-	levelEndScreenLabel.text = """You died!"""
+	levelEndScreen.getLabel().text = """You died!"""
 	if player.feathers >= 5:
-		levelEndScreenLabel.text = """You died!
+		levelEndScreen.getLabel().text = """You died!
 		
 		2 feathers lost.
 		
 		Health restored."""
 		player.points -= 20
 		player.feathers -= 2
-	mainMenu.inMenu = true
-	currentMenu = levelEndScreen
 	player.health = player.max_health
+	mainMenu.inMenu = true
+	levelEndScreen.show()
 	call_deferred("loadMainRoom", level.name+"_SpawnPoint")
 
 func loadMainRoom(target : String ="SpawnPoint"):
@@ -177,36 +168,32 @@ func loadMainRoom(target : String ="SpawnPoint"):
 		szeneTransition("demo_room", target)
 
 func startGame():
-	currentMenu = mainMenu
 	mainMenu.inMenu = true
+	mainMenu.show()
 	loadPlayer()
 	loadMainRoom()
 
-func _on_level_done_button_pressed():
-	start_gaming.emit()
+func continueGamingButtonPressed():
+	continueGaming.emit()
+	mainMenu.inMenu = false
 
-func _on_continue_pressed():
-	if get_tree().paused:
-		mainMenu.exitMenu()
-	else:
-		ResourceHandler.game_settings.tutorial_active = false
-		print("restoring state")
-		ResourceHandler.loadPlayerValues(player)
-		start_gaming.emit()
+func continueGame():
+	ResourceHandler.game_settings.tutorial_active = false
+	print("restoring state")
+	ResourceHandler.loadPlayerValues(player)
+	continueGamingButtonPressed()
 
-func _on_new_game_pressed():
+func newGame():
 	ResourceHandler.game_settings.tutorial_active = true
 	ResourceHandler.prune()
 	if player:
 		player.reset()
-	start_gaming.emit()
+	continueGamingButtonPressed()
 
-func _on_exit_game_pressed():
+func exitGame():
 	get_tree().quit()
 
-
-func _on_check_button_toggled(toggled_on):
-	print("Music Button", toggled_on)
+func toggleMusic(toggled_on):
 	if toggled_on:
 		$AudioStreamPlayer2D.play()
 	else:

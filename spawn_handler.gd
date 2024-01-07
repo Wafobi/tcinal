@@ -110,16 +110,20 @@ func featherCollected(feather : Feather):
 
 func respawnPlayer():
 	respawnCount += 1
+	player.velocity = Vector2.ZERO
+	player.fall_velocity = 0
 	if Checkpoints.last_checkpoint:
 		player.position = Checkpoints.last_checkpoint
 	else:
 		player.position = Checkpoints.levelspawn
 	if feathersCollected > 0:
 		feathersCollected -= 1
+	player.active = true
 	respawning = false
 
 func levelBoundsHit(body):
 	if body is Player and not leaving_level and not respawning:
+		player.active = false
 		respawning = true
 		call_deferred("respawnPlayer")
 	if body is Frog:

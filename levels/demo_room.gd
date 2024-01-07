@@ -22,7 +22,9 @@ func cameraOff():
 	$Camera2D.enabled = false
 
 func getCurrentStatistics() -> String:
-	return "%d" % [player.feathers]
+	if player:
+		return "%d" % [player.feathers]
+	return ""
 
 func getChickenSpawnPoints() -> Array:
 	return getTileMap().get_tree().get_nodes_in_group("chickenSpawnPoint")

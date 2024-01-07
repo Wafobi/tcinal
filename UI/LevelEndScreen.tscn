@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://cckydhkulpfjw"]
+
+[ext_resource type="Script" path="res://UI/LevelEndScreen.gd" id="1_c8ddp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c2rdy"]
+bg_color = Color(0, 0, 0, 0.603922)
+
+[node name="LevelEndScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c8ddp")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -29.0
+offset_right = 35.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="GridContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_c2rdy")
+text = "Congratulations Level Done!
+"
+
+[node name="Button" type="Button" parent="GridContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+text = "Continue"
+
+[connection signal="pressed" from="GridContainer/Button" to="." method="_on_button_pressed"]

@@ -1,60 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://bhkwdri1lpplk"]
+[gd_scene load_steps=8 format=3 uid="uid://bhkwdri1lpplk"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_gbal1"]
 [ext_resource type="PackedScene" uid="uid://cha83ev2hvxm5" path="res://transition.tscn" id="2_jgo5c"]
-[ext_resource type="Theme" uid="uid://cwfm24wycg4k3" path="res://healthbar.tres" id="3_6kl40"]
-[ext_resource type="Texture2D" uid="uid://brfjfshyh8tmc" path="res://assets/gfx/feathers.png" id="4_5gs7d"]
 [ext_resource type="AudioStream" uid="uid://dnm225nphpmr3" path="res://assets/sfx/soundtrack.ogg" id="5_foidk"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vg1cw"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(1, 1, 1, 1)
-shadow_color = Color(0, 0, 0, 0.768627)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6fje3"]
-bg_color = Color(1, 0, 0, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.8, 0.8, 0.8, 0)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cwgv4"]
-atlas = ExtResource("4_5gs7d")
-region = Rect2(32, 0, 16, 16)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b8w3m"]
-bg_color = Color(0, 0, 0, 0.603922)
-
-[sub_resource type="GDScript" id="GDScript_ohhn4"]
-script/source = "extends Control
-
-var inMenu : bool = false
-
-func exitMenu():
-	if get_tree().paused:
-		hide()
-		$GridContainer/Label.text = \"Chefs's Adventure\"
-		$\"GridContainer/NewGame\".show()
-		$\"GridContainer/ExitGame\".show()
-		get_tree().paused = false
-
-func _input(_event):
-	if Input.is_action_just_pressed(\"openMenu\") and not inMenu:
-		if get_tree().paused:
-			exitMenu()
-		else:
-			$GridContainer/Label.text = \"Game paused\"
-			$\"GridContainer/Continue\".show()
-			$\"GridContainer/NewGame\".hide()
-			$\"GridContainer/ExitGame\".show()
-			show()
-			get_tree().paused = true
-"
+[ext_resource type="PackedScene" uid="uid://dvstte0k1hs3h" path="res://UI/TutorialMenu.tscn" id="5_s6jn6"]
+[ext_resource type="PackedScene" uid="uid://ds6dqt8g3ktyg" path="res://UI/LevelStats.tscn" id="6_8t6bj"]
+[ext_resource type="PackedScene" uid="uid://bgi1cvt0xldq4" path="res://UI/MainMenu.tscn" id="6_rn4ie"]
+[ext_resource type="PackedScene" uid="uid://cckydhkulpfjw" path="res://UI/LevelEndScreen.tscn" id="7_f1v6g"]
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_gbal1")
@@ -64,6 +16,7 @@ wait_time = 0.5
 autostart = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+process_mode = 3
 
 [node name="Transition" parent="CanvasLayer" instance=ExtResource("2_jgo5c")]
 anchors_preset = 8
@@ -73,130 +26,26 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+process_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="LevelStats" type="Control" parent="CanvasLayer/MarginContainer"]
+[node name="TutorialMenu" parent="CanvasLayer/MarginContainer" instance=ExtResource("5_s6jn6")]
 layout_mode = 2
-size_flags_horizontal = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer/LevelStats"]
-layout_mode = 2
-offset_left = 40.0
-offset_top = 40.0
-offset_right = 121.0
-offset_bottom = 104.0
-
-[node name="healthBar" type="ProgressBar" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 1
-theme = ExtResource("3_6kl40")
-theme_override_colors/font_color = Color(0, 0, 0, 0)
-theme_override_styles/background = SubResource("StyleBoxFlat_vg1cw")
-theme_override_styles/fill = SubResource("StyleBoxFlat_6fje3")
-max_value = 10.0
-value = 5.0
-
-[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer"]
-layout_mode = 2
-
-[node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer/HBoxContainer"]
-position = Vector2(-10, 11)
-scale = Vector2(1.3, 1.3)
-texture = SubResource("AtlasTexture_cwgv4")
-
-[node name="LevelLabel" type="Label" parent="CanvasLayer/MarginContainer/LevelStats/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "Level stuff"
-
-[node name="LevelEndScreen" type="Control" parent="CanvasLayer/MarginContainer"]
-visible = false
-layout_mode = 2
-
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/MarginContainer/LevelEndScreen"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -35.0
-offset_top = -29.0
-offset_right = 35.0
-offset_bottom = 29.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer"]
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_b8w3m")
-text = "Congratulations Level Done!
-"
-
-[node name="Button" type="Button" parent="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer"]
-layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
-text = "Ok"
 
-[node name="Main Menu" type="Control" parent="CanvasLayer/MarginContainer"]
-process_mode = 3
-layout_mode = 2
-mouse_filter = 2
-script = SubResource("GDScript_ohhn4")
-
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/MarginContainer/Main Menu"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -64.0
-offset_top = -33.0
-offset_right = 64.0
-offset_bottom = 33.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
-layout_mode = 2
-text = "Chefs's Adventure"
-
-[node name="HSeparator" type="HSeparator" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+[node name="LevelEndScreen" parent="CanvasLayer/MarginContainer" instance=ExtResource("7_f1v6g")]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
+[node name="LevelStats" parent="CanvasLayer/MarginContainer" instance=ExtResource("6_8t6bj")]
 layout_mode = 2
 
-[node name="MusicLabel" type="Label" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2"]
+[node name="MainMenu" parent="CanvasLayer/MarginContainer" instance=ExtResource("6_rn4ie")]
 layout_mode = 2
-text = "Music"
-
-[node name="MusicButton" type="CheckButton" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2"]
-layout_mode = 2
-flat = true
-
-[node name="HSeparator2" type="HSeparator" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
-layout_mode = 2
-
-[node name="Continue" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
-layout_mode = 2
-text = "Continue Game"
-
-[node name="NewGame" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
-layout_mode = 2
-text = "New Game"
-
-[node name="ExitGame" type="Button" parent="CanvasLayer/MarginContainer/Main Menu/GridContainer"]
-layout_mode = 2
-text = "Quit Game"
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 process_mode = 3
@@ -205,8 +54,3 @@ volume_db = -20.0
 autoplay = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="pressed" from="CanvasLayer/MarginContainer/LevelEndScreen/GridContainer/Button" to="." method="_on_level_done_button_pressed"]
-[connection signal="toggled" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/HBoxContainer2/MusicButton" to="." method="_on_check_button_toggled"]
-[connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/Continue" to="." method="_on_continue_pressed"]
-[connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/NewGame" to="." method="_on_new_game_pressed"]
-[connection signal="pressed" from="CanvasLayer/MarginContainer/Main Menu/GridContainer/ExitGame" to="." method="_on_exit_game_pressed"]

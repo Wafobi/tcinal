@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://bf2spjbxednwv"]
 
 [ext_resource type="Script" path="res://levels/mountains.gd" id="1_r2svr"]
-[ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/town.tscn" id="2_cq504"]
+[ext_resource type="PackedScene" uid="uid://taki1gh7ln75" path="res://levels/town.tscn" id="2_cq504"]
 [ext_resource type="Texture2D" uid="uid://c0luyyboj6d8j" path="res://assets/gfx/mountain_background.png" id="2_k2s53"]
 [ext_resource type="PackedScene" uid="uid://dukfbdifltsec" path="res://items/checkpoint.tscn" id="3_q3dyi"]
 [ext_resource type="PackedScene" uid="uid://cljd730g31gmq" path="res://entities/chicken.tscn" id="4_klu42"]

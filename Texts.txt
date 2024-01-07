@@ -1,13 +1,9 @@
 TODO:
-	castle level
-	more feather typed
-	make goal a chicken
-	UI
+	Ingame Tutorial - todo
+	Also add arrow keys for steering - ok
+	Check Controller steering - ok
 
-
-
-
-Titel: The cake is not a lie
+Titel: Chefs Adventure
 
 1)
 Spieler steht auf:

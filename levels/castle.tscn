@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://8q1orc6c4s2u"]
 
 [ext_resource type="Script" path="res://levels/castle.gd" id="1_4g4jk"]
-[ext_resource type="PackedScene" uid="uid://0pirbm6cmolt" path="res://levels/town.tscn" id="2_6opg2"]
+[ext_resource type="PackedScene" uid="uid://taki1gh7ln75" path="res://levels/town.tscn" id="2_6opg2"]
 [ext_resource type="PackedScene" uid="uid://bws0dg1tfv3nq" path="res://items/feather.tscn" id="2_wbwnw"]
 [ext_resource type="PackedScene" uid="uid://dukfbdifltsec" path="res://items/checkpoint.tscn" id="3_j4dbw"]
 [ext_resource type="PackedScene" uid="uid://cljd730g31gmq" path="res://entities/chicken.tscn" id="5_vyaw1"]

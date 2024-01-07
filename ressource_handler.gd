@@ -99,7 +99,6 @@ func _ready():
 	addItem("frog_acid")
 	addItem("frog_fire")
 
-
 func instantiate_resource(resource_name):
 	if resource_name and resource_name in resources:
 		return load(resources[resource_name]+".tscn").instantiate()
