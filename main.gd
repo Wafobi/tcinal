@@ -29,7 +29,8 @@ func _ready():
 
 	mainMenu.hide()
 	mainMenu.new_game.connect(newGame)
-	mainMenu.continue_game.connect(continueGame)
+	mainMenu.continue_game.connect(loadSaveGame)
+
 	mainMenu.exit_game.connect(exitGame)
 	mainMenu.toggleMusic.connect(toggleMusic)
 	
@@ -45,7 +46,7 @@ func _ready():
 	level = null
 	spawnPoint = ""
 	player = null
-	startGame()
+	call_deferred("startGame")
 
 func loadPlayer():
 	player = ResourceHandler.instantiate_resource("player")
@@ -66,13 +67,17 @@ func onPlayerSetupDone():
 
 	transitionAnimation.revealLevel()
 	await transitionAnimation.revealDone
+	print(mainMenu.inMenu, ResourceHandler.game_settings.tutorial_active)
 	if mainMenu.inMenu:
+		print("waiting for main menu quit", ResourceHandler.game_settings.tutorial_active)
 		await continueGaming
+		print ("me")
 		if ResourceHandler.game_settings.tutorial_active:
-			mainMenu.inMenu = true
+			print("waiting for tutorial menu quit")
 			tutorialMenu.show()
 			await tutorialMenu.tutorial_done
-
+		mainMenu.inMenu = false
+	print("ok")
 	updateLevelLabel()
 	levelStats.show()
 	if player:
@@ -84,8 +89,6 @@ func szeneTransition(toSzene : String ,target : String ="SpawnPoint"):
 	if player and player.active:
 		levelStats.hide()
 		player.active = false
-		transitionAnimation.hideLevel()
-		await transitionAnimation.hideDone
 	var new_level = ResourceHandler.instantiate_resource(toSzene)
 	if new_level:
 		if level:
@@ -118,15 +121,21 @@ func levelCreated():
 			return
 
 func levelDone():
+	transitionAnimation.hideLevel()
+	await transitionAnimation.hideDone
 	ResourceHandler.addChicken(level.getChicken().type)
 	levelEndScreen.getLabel().text = level.getLevelStatistics()
 	player.active = false
 	player.velocity = Vector2.ZERO
 	if level.name == "demo_room":
+		ResourceHandler.freeChickens()
+
 		mainMenu.inMenu = true
 		levelEndScreen.show()
-		ResourceHandler.freeChickens()
+
 		await continueGaming
+		mainMenu.inMenu = false
+
 		player.active = true
 		saveGame()
 	else:
@@ -135,6 +144,8 @@ func levelDone():
 		levelStats.hide()
 		player.health = player.max_health
 		saveGame()
+		mainMenu.inMenu = true
+		levelEndScreen.show()
 		call_deferred("loadMainRoom")
 
 func updateLevelLabel():
@@ -173,22 +184,21 @@ func startGame():
 	loadPlayer()
 	loadMainRoom()
 
-func continueGamingButtonPressed():
-	continueGaming.emit()
-	mainMenu.inMenu = false
-
 func continueGame():
+	continueGaming.emit()
+
+func loadSaveGame():
 	ResourceHandler.game_settings.tutorial_active = false
 	print("restoring state")
 	ResourceHandler.loadPlayerValues(player)
-	continueGamingButtonPressed()
+	continueGame()
 
 func newGame():
 	ResourceHandler.game_settings.tutorial_active = true
 	ResourceHandler.prune()
 	if player:
 		player.reset()
-	continueGamingButtonPressed()
+	continueGame()
 
 func exitGame():
 	get_tree().quit()

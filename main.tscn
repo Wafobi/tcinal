@@ -18,13 +18,6 @@ autostart = true
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 process_mode = 3
 
-[node name="Transition" parent="CanvasLayer" instance=ExtResource("2_jgo5c")]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
 process_mode = 3
 anchors_preset = 15
@@ -46,6 +39,13 @@ layout_mode = 2
 
 [node name="MainMenu" parent="CanvasLayer/MarginContainer" instance=ExtResource("6_rn4ie")]
 layout_mode = 2
+
+[node name="Transition" parent="CanvasLayer" instance=ExtResource("2_jgo5c")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 process_mode = 3
