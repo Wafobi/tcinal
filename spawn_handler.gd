@@ -258,7 +258,7 @@ func cleanup(defer = false):
 		player = null
 
 func _input(_event):
-	if Input.is_action_just_pressed("interact"):
+	if Input.is_action_just_pressed("Interact"):
 		for door in getDoors():
 			var overlaps = door.get_overlapping_bodies()
 			if overlaps.size() > 0:

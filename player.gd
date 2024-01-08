@@ -129,7 +129,7 @@ func _physics_process(delta):
 		move_and_slide()
 
 func move(delta):
-	direction = Input.get_vector("walk_left", "walk_right", "walk_up", "walk_down").normalized()
+	direction = Input.get_vector("Walk Left", "Walk Right", "walk_up", "walk_down").normalized()
 	var speed = default_speed
 	match state:
 		states.WALL:
@@ -152,7 +152,7 @@ func move(delta):
 			elif is_near_wall():
 				state = states.WALL
 				return
-			if Input.is_action_just_pressed("jump"):
+			if Input.is_action_just_pressed("Jump"):
 				if (can_coyote_jump or can_double_jump()):
 					jump()
 					state = states.JUMP
@@ -170,7 +170,7 @@ func move(delta):
 			elif velocity.y >= 0:
 				state = states.AIR
 				return
-			if Input.is_action_just_pressed("jump") and can_double_jump():
+			if Input.is_action_just_pressed("Jump") and can_double_jump():
 				jump() #we stay in jump state
 			elif Input.is_action_just_pressed("dash"):
 				dash()
@@ -183,14 +183,14 @@ func move(delta):
 				state = states.AIR
 				coyote()
 				return
-			if Input.is_action_just_pressed("jump") or jump_buffer > 0:
+			if Input.is_action_just_pressed("Jump") or jump_buffer > 0:
 				jump()
 				state = states.JUMP
 				return
 			if Input.is_action_just_pressed("dash"):
 				dash()
 				pass
-			if Input.is_action_pressed("run"):
+			if Input.is_action_pressed("Run"):
 				speed *= 1.5
 			if direction.x:
 				velocity.x = direction.x * speed
@@ -199,14 +199,14 @@ func move(delta):
 func wallSlide():
 	if has_wall_slide:
 		velocity.y = 100 #slow us waaayy down
-		if Input.is_action_pressed("run"):
+		if Input.is_action_pressed("Run"):
 			velocity.y = 200
 
 func wallJump() -> bool:
 	if has_wall_jump:
-		if Input.is_action_just_pressed("jump") and view_direction != direction:
+		if Input.is_action_just_pressed("Jump") and view_direction != direction:
 			velocity.y = jump_velocity
-			if Input.is_action_pressed("run"):
+			if Input.is_action_pressed("Run"):
 				velocity.y = jump_velocity * 0.5
 			if looks_left():
 				velocity.x = 100

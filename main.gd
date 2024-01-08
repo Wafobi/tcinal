@@ -7,7 +7,6 @@ var spawnPoint :String
 var player : Player
 
 var mainMenu : MainMenu
-var tutorialMenu : TutorialMenu
 var levelEndScreen : LevelEndScreen
 var levelStats : LevelStats
 
@@ -23,7 +22,6 @@ signal continueGaming
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	mainMenu = $"CanvasLayer/MarginContainer/MainMenu"
-	tutorialMenu = $CanvasLayer/MarginContainer/TutorialMenu
 	levelStats = $CanvasLayer/MarginContainer/LevelStats
 	levelEndScreen = $CanvasLayer/MarginContainer/LevelEndScreen
 
@@ -33,8 +31,7 @@ func _ready():
 
 	mainMenu.exit_game.connect(exitGame)
 	mainMenu.toggleMusic.connect(toggleMusic)
-	
-	tutorialMenu.hide()
+
 	levelEndScreen.hide()
 	levelEndScreen.continuePressed.connect(continueGame)
 	levelStats.hide()
@@ -67,15 +64,9 @@ func onPlayerSetupDone():
 
 	transitionAnimation.revealLevel()
 	await transitionAnimation.revealDone
-	print(mainMenu.inMenu, ResourceHandler.game_settings.tutorial_active)
+
 	if mainMenu.inMenu:
-		print("waiting for main menu quit", ResourceHandler.game_settings.tutorial_active)
 		await continueGaming
-		print ("me")
-		if ResourceHandler.game_settings.tutorial_active:
-			print("waiting for tutorial menu quit")
-			tutorialMenu.showMenu()
-			await tutorialMenu.tutorial_done
 		mainMenu.inMenu = false
 	print("ok")
 	updateLevelLabel()

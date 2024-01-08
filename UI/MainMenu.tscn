@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bgi1cvt0xldq4"]
+[gd_scene load_steps=3 format=3 uid="uid://bgi1cvt0xldq4"]
 
 [ext_resource type="Script" path="res://UI/MainMenu.gd" id="1_88bgh"]
+[ext_resource type="PackedScene" uid="uid://dvstte0k1hs3h" path="res://UI/TutorialMenu.tscn" id="2_nl2t4"]
 
 [node name="MainMenu" type="Control"]
 process_mode = 3
@@ -61,12 +62,21 @@ process_mode = 3
 layout_mode = 2
 text = "New Game"
 
+[node name="Settings" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "Settings"
+
 [node name="ExitGame" type="Button" parent="GridContainer"]
 process_mode = 3
 layout_mode = 2
 text = "Quit Game"
 
+[node name="TutorialMenu" parent="." instance=ExtResource("2_nl2t4")]
+layout_mode = 1
+
 [connection signal="toggled" from="GridContainer/HBoxContainer2/MusicButton" to="." method="_on_music_button_toggled"]
 [connection signal="pressed" from="GridContainer/Continue" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="GridContainer/NewGame" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="GridContainer/Settings" to="." method="_on_help_pressed"]
+[connection signal="toggled" from="GridContainer/Settings" to="." method="_on_help_toggled"]
 [connection signal="pressed" from="GridContainer/ExitGame" to="." method="_on_exit_game_pressed"]
