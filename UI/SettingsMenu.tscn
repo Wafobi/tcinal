@@ -13,62 +13,104 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s8elq")
 
-[node name="GridContainer" type="GridContainer" parent="."]
+[node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -52.0
-offset_top = -29.0
-offset_right = 52.0
-offset_bottom = 29.0
+offset_left = -167.0
+offset_top = -229.0
+offset_right = 184.0
+offset_bottom = 243.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.180392, 0.180392, 0.180392, 0.705882)
+
+[node name="TextureRect" type="TextureRect" parent="."]
+self_modulate = Color(0.164706, 0.164706, 0.164706, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="GridContainer"]
+[node name="GridContainer" type="GridContainer" parent="TextureRect"]
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -121.0
+offset_right = 100.0
+offset_bottom = 121.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="TextureRect/GridContainer"]
 layout_mode = 2
 text = "KeyMappings"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GridContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="TextureRect/GridContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="GridContainer/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="TextureRect/GridContainer/VBoxContainer"]
 process_mode = 3
 layout_mode = 2
 
-[node name="MusicLabel" type="Label" parent="GridContainer/VBoxContainer/HBoxContainer2"]
+[node name="MusicLabel" type="Label" parent="TextureRect/GridContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 text = "Music"
 
-[node name="MusicButton" type="CheckButton" parent="GridContainer/VBoxContainer/HBoxContainer2"]
+[node name="MusicButton" type="CheckButton" parent="TextureRect/GridContainer/VBoxContainer/HBoxContainer2"]
 process_mode = 3
 layout_mode = 2
 flat = true
 
-[node name="Label2" type="Label" parent="GridContainer"]
+[node name="Label2" type="Label" parent="TextureRect/GridContainer"]
 layout_mode = 2
 text = "Volume"
 
-[node name="VolumeSlider" type="HSlider" parent="GridContainer"]
+[node name="VolumeSlider" type="HSlider" parent="TextureRect/GridContainer"]
 layout_mode = 2
 min_value = -50.0
 max_value = 10.0
 step = 5.0
 
-[node name="Use Controller" type="CheckButton" parent="GridContainer"]
+[node name="HSeparator" type="HSeparator" parent="TextureRect/GridContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="TextureRect/GridContainer"]
+layout_mode = 2
+text = "KeyMapping"
+
+[node name="Use Controller" type="CheckButton" parent="TextureRect/GridContainer"]
 process_mode = 3
 layout_mode = 2
 mouse_filter = 1
 text = "Use Controller"
 
-[node name="Controls" type="VBoxContainer" parent="GridContainer"]
+[node name="Controls" type="VBoxContainer" parent="TextureRect/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
 
-[node name="PlayButton" type="Button" parent="GridContainer"]
+[node name="ResetMappings" type="Button" parent="TextureRect/GridContainer"]
+layout_mode = 2
+text = "Reset Mappings"
+
+[node name="PlayButton" type="Button" parent="TextureRect/GridContainer"]
 layout_mode = 2
 text = "Back"
 
@@ -76,7 +118,8 @@ text = "Back"
 stream = ExtResource("2_8l5d5")
 volume_db = 10.0
 
-[connection signal="toggled" from="GridContainer/VBoxContainer/HBoxContainer2/MusicButton" to="." method="_on_music_button_toggled"]
-[connection signal="drag_ended" from="GridContainer/VolumeSlider" to="." method="_on_volume_slider_drag_ended"]
-[connection signal="toggled" from="GridContainer/Use Controller" to="." method="_on_use_controller_toggled"]
-[connection signal="pressed" from="GridContainer/PlayButton" to="." method="_on_button_pressed"]
+[connection signal="toggled" from="TextureRect/GridContainer/VBoxContainer/HBoxContainer2/MusicButton" to="." method="_on_music_button_toggled"]
+[connection signal="drag_ended" from="TextureRect/GridContainer/VolumeSlider" to="." method="_on_volume_slider_drag_ended"]
+[connection signal="toggled" from="TextureRect/GridContainer/Use Controller" to="." method="_on_use_controller_toggled"]
+[connection signal="pressed" from="TextureRect/GridContainer/ResetMappings" to="." method="_on_reset_mappings_pressed"]
+[connection signal="pressed" from="TextureRect/GridContainer/PlayButton" to="." method="_on_button_pressed"]

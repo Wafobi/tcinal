@@ -25,8 +25,42 @@ var game_settings = {
 	binary_save_game = false,
 	demo = true,
 	testing = false,
-	volume = 0
+	volume = 0,
+	defaultKeyMappings = {
+		"controllerMapping" = { "Walk Left": "Joypad Button 13 (D-pad Left)", "Walk Right": "Joypad Button 14 (D-pad Right)", "Jump": "Joypad Button 0 (Bottom Action, Sony Cross, Xbox A, Nintendo B)", "Run": "Joypad Button 2 (Left Action, Sony Square, Xbox X, Nintendo Y)", "Interact": "Joypad Button 10 (Right Shoulder, Sony R1, Xbox RB)", "Pause Game": "Joypad Button 6 (Start, Xbox Menu, Nintendo +)" },
+		"keyboardMapping" = { "Walk Left": "A", "Walk Right": "D", "Jump": "Space", "Run": "Shift", "Interact": "F", "Pause Game": "Escape" }
+	},
+	playerKeyMappings = {
+		"controllerMapping" = { "Walk Left": "Joypad Button 13 (D-pad Left)", "Walk Right": "Joypad Button 14 (D-pad Right)", "Jump": "Joypad Button 0 (Bottom Action, Sony Cross, Xbox A, Nintendo B)", "Run": "Joypad Button 2 (Left Action, Sony Square, Xbox X, Nintendo Y)", "Interact": "Joypad Button 10 (Right Shoulder, Sony R1, Xbox RB)", "Pause Game": "Joypad Button 6 (Start, Xbox Menu, Nintendo +)" },
+		"keyboardMapping" = { "Walk Left": "A", "Walk Right": "D", "Jump": "Space", "Run": "Shift", "Interact": "F", "Pause Game": "Escape" }
+	}
 }
+
+func resetControllerMappings():
+	game_settings.playerKeyMappings["controllerMapping"] = game_settings.defaultKeyMappings["controllerMapping"]
+
+func resetPlayerKeyboardMappings():
+	game_settings.playerKeyMappings["keyboardMapping"] = game_settings.defaultKeyMappings["keyboardMapping"]
+
+func getPlayerControllerMappings() -> Dictionary:
+	return game_settings.playerKeyMappings["controllerMapping"]
+
+func getPlayerKeyboardMappings() -> Dictionary: 
+	return game_settings.playerKeyMappings["keyboardMapping"]
+
+func setPlayerMapping(mapping, key, value) :
+	game_settings.playerKeyMappings[mapping][key] = value
+
+func setPlayerKeyboardMapping(key, value) :
+	game_settings.playerKeyMappings["keyboardMapping"][key] = value
+
+func setPlayerControllerMapping(key, value) :
+	game_settings.playerKeyMappings["controllerMapping"][key] = value
+
+func getKeyMapping(mapping,key) -> String:
+	if game_settings.playerKeyMappings[mapping].has_key(key):
+		return game_settings.playerMapping[mapping][key]
+	return game_settings.defaultKeyMappings[mapping][key]
 
 var settingsSaveFile = saveFolder+"settings.json"
 func loadSettings():
@@ -35,18 +69,13 @@ func loadSettings():
 		return
 	var file = FileAccess.open(settingsSaveFile, FileAccess.READ)
 	var savedData = JSON.parse_string(file.get_as_text())
-	game_settings.volume = savedData["game_settings"]["volume"]
+	game_settings = savedData
 
 func saveSettings():
 	if not DirAccess.dir_exists_absolute(saveFolder):
 		DirAccess.make_dir_absolute(saveFolder)
-	var saveData = {
-		"game_settings" : {
-			"volume" : game_settings.volume
-		}
-	}
 	var file = FileAccess.open(settingsSaveFile, FileAccess.WRITE)
-	file.store_string(JSON.stringify(saveData))
+	file.store_string(JSON.stringify(game_settings))
 
 func settingsSaveFileExists():
 	return FileAccess.file_exists(settingsSaveFile)
