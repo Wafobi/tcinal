@@ -2,7 +2,7 @@ class_name LevelEndScreen extends Control
 
 signal continuePressed
 
-func _ready():
+func showMenu():
 	$"GridContainer/Button".grab_focus()
 
 func _on_button_pressed():

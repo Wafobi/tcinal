@@ -9,11 +9,14 @@ var inMenu : bool = false
 
 func _ready():
 	$GridContainer/HBoxContainer2/MusicButton.button_pressed = true
+
+func showMenu():
 	if ResourceHandler.saveFileExists():
 		$"GridContainer/Continue".grab_focus()
 	else:
 		$"GridContainer/Continue".hide()
 		$"GridContainer/NewGame".grab_focus()
+	super.show()
 
 func _on_continue_pressed():
 	hide()

@@ -74,7 +74,7 @@ func onPlayerSetupDone():
 		print ("me")
 		if ResourceHandler.game_settings.tutorial_active:
 			print("waiting for tutorial menu quit")
-			tutorialMenu.show()
+			tutorialMenu.showMenu()
 			await tutorialMenu.tutorial_done
 		mainMenu.inMenu = false
 	print("ok")
@@ -131,7 +131,7 @@ func levelDone():
 		ResourceHandler.freeChickens()
 
 		mainMenu.inMenu = true
-		levelEndScreen.show()
+		levelEndScreen.showMenu()
 
 		await continueGaming
 		mainMenu.inMenu = false
@@ -145,7 +145,7 @@ func levelDone():
 		player.health = player.max_health
 		saveGame()
 		mainMenu.inMenu = true
-		levelEndScreen.show()
+		levelEndScreen.showMenu()
 		call_deferred("loadMainRoom")
 
 func updateLevelLabel():
@@ -170,7 +170,7 @@ func onPlayerDeath():
 		player.feathers -= 2
 	player.health = player.max_health
 	mainMenu.inMenu = true
-	levelEndScreen.show()
+	levelEndScreen.showMenu()
 	call_deferred("loadMainRoom", level.name+"_SpawnPoint")
 
 func loadMainRoom(target : String ="SpawnPoint"):
@@ -180,7 +180,7 @@ func loadMainRoom(target : String ="SpawnPoint"):
 
 func startGame():
 	mainMenu.inMenu = true
-	mainMenu.show()
+	mainMenu.showMenu()
 	loadPlayer()
 	loadMainRoom()
 
