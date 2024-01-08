@@ -1,11 +1,55 @@
 extends Node2D
 
+func _ready():
+	#make this more dynamic
+	addCharacter("player")
+
+	addLevel("demo_room")
+	addLevel("fields")
+	addLevel("mountains")
+	addLevel("castle")
+
+	addItem("feathers")
+	addItem("checkpoint")
+	addItem("frog_spit")
+	addItem("frog_acid")
+	addItem("frog_fire")
+
+var resources = {}
+var saveFiles = {}
+
+var worldName="demo_world"
+var saveFolder="user://"+worldName+"/"
+
 var game_settings = {
 	binary_save_game = false,
 	demo = true,
 	testing = false,
-	tutorial_active = true
+	volume = 0
 }
+
+var settingsSaveFile = saveFolder+"settings.json"
+func loadSettings():
+	if not settingsSaveFileExists():
+		game_settings.volume = -10
+		return
+	var file = FileAccess.open(settingsSaveFile, FileAccess.READ)
+	var savedData = JSON.parse_string(file.get_as_text())
+	game_settings.volume = savedData["game_settings"]["volume"]
+
+func saveSettings():
+	if not DirAccess.dir_exists_absolute(saveFolder):
+		DirAccess.make_dir_absolute(saveFolder)
+	var saveData = {
+		"game_settings" : {
+			"volume" : game_settings.volume
+		}
+	}
+	var file = FileAccess.open(settingsSaveFile, FileAccess.WRITE)
+	file.store_string(JSON.stringify(saveData))
+
+func settingsSaveFileExists():
+	return FileAccess.file_exists(settingsSaveFile)
 
 var chicken_coop = {
 	var_to_str(Feather.Type.brown) : false,
@@ -30,7 +74,6 @@ func isChikckenCoopFull() -> bool:
 	return chicken_coop[var_to_str(Feather.Type.brown)] and chicken_coop[var_to_str(Feather.Type.grey)] and chicken_coop[var_to_str(Feather.Type.white)] 
 
 func getReward(player : Player) -> String:
-
 	if chicken_coop[var_to_str(Feather.Type.rainbow)] == 1 : 
 			player.has_double_jump = true
 			return """Double Jump:
@@ -55,20 +98,6 @@ func getReward(player : Player) -> String:
 			"""
 	return "nothing"
 
-func loadGameSettings():
-	if not DirAccess.dir_exists_absolute(saveFolder):
-		return
-	#TODO when needed
-
-var resources = {}
-
-var saveFiles = {}
-
-var worldName="demo_world"
-
-var saveFolder="user://"+worldName+"/"
-var playerSaveFile = saveFolder+"/player.dat"
-
 func addSaveFile(nodeName : String):
 	saveFiles[nodeName] = saveFolder+nodeName+".tscn"
 
@@ -83,21 +112,6 @@ func addLevel(levelName : String, file : String = levelName):
 
 func addItem(itemName : String):
 	resources[itemName] = "items/"+itemName
-
-func _ready():
-	#make this more dynamic
-	addCharacter("player")
-
-	addLevel("demo_room")
-	addLevel("fields")
-	addLevel("mountains")
-	addLevel("castle")
-
-	addItem("feathers")
-	addItem("checkpoint")
-	addItem("frog_spit")
-	addItem("frog_acid")
-	addItem("frog_fire")
 
 func instantiate_resource(resource_name):
 	if resource_name and resource_name in resources:
@@ -131,6 +145,8 @@ func saveNode(node : Node):
 		print("saving ", fileName)
 		ResourceSaver.save(save, fileName)
 
+var playerSaveFile = saveFolder+"/player.dat"
+
 func savePlayerValues(player : Player):
 	if not DirAccess.dir_exists_absolute(saveFolder):
 		DirAccess.make_dir_absolute(saveFolder)
@@ -155,7 +171,7 @@ func savePlayerValues(player : Player):
 	file.store_string(JSON.stringify(saveData))
 
 func loadPlayerValues(player : Player):
-	if not DirAccess.dir_exists_absolute(saveFolder):
+	if not playerSaveFileExists():
 		return
 	var file = FileAccess.open(playerSaveFile, FileAccess.READ)
 	var savedData = JSON.parse_string(file.get_as_text())
@@ -168,7 +184,7 @@ func loadPlayerValues(player : Player):
 	player.has_dash = bool(savedData["player"]["has_wall_slide"])
 
 func loadChickenCoop():
-	if not DirAccess.dir_exists_absolute(saveFolder):
+	if not playerSaveFileExists():
 		return
 	var file = FileAccess.open(playerSaveFile, FileAccess.READ)
 	var savedData = JSON.parse_string(file.get_as_text())
@@ -179,9 +195,9 @@ func loadChickenCoop():
 	chicken_coop[var_to_str(Feather.Type.white)] = chicken_coop_[var_to_str(Feather.Type.white)]
 	chicken_coop[var_to_str(Feather.Type.rainbow)] = chicken_coop_[var_to_str(Feather.Type.rainbow)]
 
-func saveFileExists():
+func playerSaveFileExists():
 	return FileAccess.file_exists(playerSaveFile)
 
 func prune():
 	if DirAccess.dir_exists_absolute(saveFolder):
-		OS.move_to_trash(ProjectSettings.globalize_path(saveFolder))
+		OS.move_to_trash(ProjectSettings.globalize_path(playerSaveFile))

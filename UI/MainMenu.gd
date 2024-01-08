@@ -2,23 +2,21 @@ class_name MainMenu extends Control
 
 signal new_game
 signal continue_game
-signal exit_game
-signal show_help
-signal toggleMusic
 
 var inMenu : bool = false
 
-var settingsMenu : TutorialMenu
+var settingsMenu : SettingsMenu
 var inNestedMenu = false
 
 func _ready():
-	settingsMenu = $TutorialMenu
+	if get_parent() is MarginContainer:
+		hide
+	settingsMenu = $SettingsMenu
 	settingsMenu.hide()
-	$GridContainer/HBoxContainer2/MusicButton.button_pressed = true
 
 func setFocus():
 	if not get_tree().paused:
-		if ResourceHandler.saveFileExists():
+		if ResourceHandler.playerSaveFileExists():
 			$"GridContainer/Continue".grab_focus()
 		else:
 			$"GridContainer/Continue".hide()
@@ -44,11 +42,7 @@ func _on_new_game_pressed():
 	new_game.emit()
 
 func _on_exit_game_pressed():
-	hide()
-	exit_game.emit()
-
-func _on_music_button_toggled(toggled_on):
-	toggleMusic.emit(toggled_on)
+	get_tree().quit()
 
 func _input(event):
 	if Input.is_action_just_pressed("Pause Game"):
@@ -62,7 +56,7 @@ func _input(event):
 		elif inNestedMenu:
 			settingsMenu.hideMenu()
 
-func _on_help_pressed():
+func _on_settings_pressed():
 	inNestedMenu = true
 	$GridContainer.hide()
 	settingsMenu.showMenu()

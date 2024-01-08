@@ -19,6 +19,7 @@ func saveGame():
 	ResourceHandler.savePlayerValues(player)
 
 signal continueGaming
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	mainMenu = $"CanvasLayer/MarginContainer/MainMenu"
@@ -28,9 +29,6 @@ func _ready():
 	mainMenu.hide()
 	mainMenu.new_game.connect(newGame)
 	mainMenu.continue_game.connect(loadSaveGame)
-
-	mainMenu.exit_game.connect(exitGame)
-	mainMenu.toggleMusic.connect(toggleMusic)
 
 	levelEndScreen.hide()
 	levelEndScreen.continuePressed.connect(continueGame)
@@ -179,23 +177,13 @@ func continueGame():
 	continueGaming.emit()
 
 func loadSaveGame():
-	ResourceHandler.game_settings.tutorial_active = false
 	print("restoring state")
 	ResourceHandler.loadPlayerValues(player)
 	continueGame()
 
 func newGame():
-	ResourceHandler.game_settings.tutorial_active = true
 	ResourceHandler.prune()
 	if player:
 		player.reset()
 	continueGame()
 
-func exitGame():
-	get_tree().quit()
-
-func toggleMusic(toggled_on):
-	if toggled_on:
-		$AudioStreamPlayer2D.play()
-	else:
-		$AudioStreamPlayer2D.stop()
