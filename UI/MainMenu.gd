@@ -14,6 +14,9 @@ func _ready():
 	settingsMenu = $SettingsMenu
 	settingsMenu.hide()
 
+func setAudioPlayer(audio : AudioStreamPlayer2D):
+	settingsMenu.setAudioPlayer(audio)
+
 func setFocus():
 	if not get_tree().paused:
 		if ResourceHandler.playerSaveFileExists():

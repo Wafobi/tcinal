@@ -22,11 +22,12 @@ signal continueGaming
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	$AudioStreamPlayer2D.volume_db = -100
 	mainMenu = $"CanvasLayer/MarginContainer/MainMenu"
 	levelStats = $CanvasLayer/MarginContainer/LevelStats
 	levelEndScreen = $CanvasLayer/MarginContainer/LevelEndScreen
-
 	mainMenu.hide()
+	mainMenu.setAudioPlayer($AudioStreamPlayer2D)
 	mainMenu.new_game.connect(newGame)
 	mainMenu.continue_game.connect(loadSaveGame)
 
@@ -110,24 +111,24 @@ func levelCreated():
 			return
 
 func levelDone():
-	transitionAnimation.hideLevel()
-	await transitionAnimation.hideDone
 	ResourceHandler.addChicken(level.getChicken().type)
 	levelEndScreen.getLabel().text = level.getLevelStatistics()
 	player.active = false
 	player.velocity = Vector2.ZERO
+	print(level.name)
 	if level.name == "demo_room":
 		ResourceHandler.freeChickens()
-
+		levelStats.hide()
 		mainMenu.inMenu = true
 		levelEndScreen.showMenu()
-
 		await continueGaming
 		mainMenu.inMenu = false
-
+		levelStats.show()
 		player.active = true
 		saveGame()
 	else:
+		transitionAnimation.hideLevel()
+		await transitionAnimation.hideDone
 		player.points += level.levelPoints
 		player.feathers += level.feathersCollected
 		levelStats.hide()
@@ -135,7 +136,7 @@ func levelDone():
 		saveGame()
 		mainMenu.inMenu = true
 		levelEndScreen.showMenu()
-		call_deferred("loadMainRoom")
+		call_deferred("loadMainRoom",level.name+"_SpawnPoint")
 
 func updateLevelLabel():
 	if level:
@@ -174,6 +175,7 @@ func startGame():
 	loadMainRoom()
 
 func continueGame():
+	mainMenu.inMenu = false
 	continueGaming.emit()
 
 func loadSaveGame():

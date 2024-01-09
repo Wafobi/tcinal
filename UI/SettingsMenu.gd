@@ -5,16 +5,19 @@ signal remapEvent
 
 var uiMap : Dictionary = {}
 
+var audioPlayer : AudioStreamPlayer2D
+
+func setAudioPlayer(inAudio : AudioStreamPlayer2D):
+	audioPlayer = inAudio
+	ResourceHandler.loadSettings()
+	audioPlayer.set_volume_db(ResourceHandler.game_settings.volume)
+	$TextureRect/GridContainer/VolumeSlider.value = ResourceHandler.game_settings.volume
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	if get_parent() is MarginContainer:
 		hide()
 
-	$AudioStreamPlayer2D.playing = false
-	ResourceHandler.loadSettings()
-	$AudioStreamPlayer2D.set_volume_db(ResourceHandler.game_settings.volume)
-	$TextureRect/GridContainer/VolumeSlider.value = ResourceHandler.game_settings.volume
-	$AudioStreamPlayer2D.playing = true
 	$TextureRect/GridContainer/VBoxContainer/HBoxContainer2/MusicButton.button_pressed = true
 	$"TextureRect/GridContainer/Use Controller".button_pressed = false
 	$"TextureRect/GridContainer/PlayButton".grab_focus()
@@ -115,14 +118,16 @@ func _on_use_controller_toggled(toggled_on):
 func _on_volume_slider_drag_ended(value_changed):
 	if value_changed:
 		ResourceHandler.game_settings.volume = $TextureRect/GridContainer/VolumeSlider.value
-		$AudioStreamPlayer2D.set_volume_db(ResourceHandler.game_settings.volume)
+		audioPlayer.set_volume_db(ResourceHandler.game_settings.volume)
 
 func _on_music_button_toggled(toggled_on):
-	if toggled_on:
-		$AudioStreamPlayer2D.set_volume_db(ResourceHandler.game_settings.volume)
-		$AudioStreamPlayer2D.play()
-	else:
-		$AudioStreamPlayer2D.stop()
+	if audioPlayer:
+		print(toggled_on)
+		if toggled_on:
+			audioPlayer.set_volume_db(ResourceHandler.game_settings.volume)
+			audioPlayer.play()
+		else:
+			audioPlayer.stop()
 
 func _unhandled_input(event):
 	if event is InputEventKey:

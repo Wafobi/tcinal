@@ -52,7 +52,7 @@ shape = SubResource("RectangleShape2D_fh6c6")
 position = Vector2(1637, 48)
 
 [node name="demo_room_SpawnPoint" type="Marker2D" parent="TileMap2" groups=["SpawnPoint"]]
-position = Vector2(24, 46)
+position = Vector2(24, 39)
 
 [node name="demo_room" type="Area2D" parent="TileMap2" groups=["door"]]
 position = Vector2(24, 41)

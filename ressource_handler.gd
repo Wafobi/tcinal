@@ -228,5 +228,5 @@ func playerSaveFileExists():
 	return FileAccess.file_exists(playerSaveFile)
 
 func prune():
-	if DirAccess.dir_exists_absolute(saveFolder):
+	if playerSaveFileExists():
 		OS.move_to_trash(ProjectSettings.globalize_path(playerSaveFile))
